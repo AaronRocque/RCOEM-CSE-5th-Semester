@@ -1,0 +1,28 @@
+select table_name, constraint_name, constraint_type
+  from user_constraintS
+  where UPPER(table_name) = 'CUSTOMER';
+
+  select table_name, constraint_name, constraint_type
+  from user_constraintS
+  where UPPER(table_name) = 'LINE';
+
+  select table_name, constraint_name, constraint_type
+  from user_constraintS
+  where UPPER(table_name) = 'INVOICE';
+
+  select table_name, constraint_name, constraint_type
+  from user_constraintS
+  where UPPER(table_name) = 'PRODUCT';
+
+  select table_name, constraint_name, constraint_type
+  from user_constraintS
+  where UPPER(table_name) = 'VENDOR';
+
+column descript format a20 wrap
+column qty format 9999
+column pmin format 9999
+column p_min format 9999
+column p_disc format 9999
+column v_code format 9999
+
+INSERT INTO CUSTOMER(10020, 'ROCQUE', 'AARON', 904, 3562098, 500.0);

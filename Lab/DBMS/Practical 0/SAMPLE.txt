@@ -1,0 +1,76 @@
+CREATE TABLE PERSON(
+AadharNo NUMBER(12) NOT NULL,
+FName VARCHAR(15) NOT NULL,
+LName VARCHAR(15) NOT NULL,
+Gender CHAR(1) NOT NULL,
+BirthDate DATE DEFAULT (SYSDATE - (365*18)) NOT NULL,
+PinCode NUMBER(6),
+Email VARCHAR(35),
+CONSTRAINT PERSON_PK_AadharNo PRIMARY KEY (AadharNo),
+CONSTRAINT PERSON_CK_Gender CHECK (GENDER IN ('M','F','m','f'))
+);
+	
+-------------------------------------------------------------
+
+CREATE TABLE CONTACT(
+AadharNo NUMBER(12) NOT NULL,
+Phone NUMBER(10) NOT NULL,
+CONSTRAINT CONTACT_PK_COMPOSITE PRIMARY KEY (AadharNo, Phone),
+CONSTRAINT CONTACT_FK_PERSON_AadharNo FOREIGN KEY (AadharNo) REFERENCES PERSON (AadharNo)
+);
+
+-----------------------------------------------------------------
+
+INSERT INTO PERSON VALUES (100000000007,'Hannah', 'Rocque', 'F', '22-OCT-2004', 899801,'rocqueh@rknec.edu');
+
+-----------------------------------------------------------------
+
+UPDATE PERSON
+SET PINCODE = 123412
+WHERE AADHARNO = 100000007;
+
+---------------------------------------------------------------
+
+INSERT INTO CONTACT VALUES (100000002, 800744551);
+
+-----------------------------------------------------------------
+
+SELECT PERSON.FName, PERSON.LName, CONTACT.Phone
+FROM PERSON
+INNER JOIN CONTACT ON PERSON.AadharNo = CONTACT.AadharNo
+WHERE FName = 'Aaron';
+
+-------------------------------------------------------------------
+
+SELECT PERSON.FName, PERSON.LName, CONTACT.Phone
+FROM PERSON
+INNER JOIN CONTACT ON PERSON.AadharNo = CONTACT.AadharNo
+WHERE LName = 'Rocque';
+
+------------------------------------------------------------------
+
+SELECT PERSON.FName, PERSON.LName, CONTACT.Phone
+FROM PERSON
+INNER JOIN CONTACT ON PERSON.AadharNo = CONTACT.AadharNo
+WHERE Phone = '8007445511';
+
+------------------------------------------------------------------
+
+UPDATE CONTACT
+SET Phone = 8007445511
+WHERE AadharNo = 111100000007;
+
+----------------------------------------------------------------
+
+==================================================================
+
+SELECT PERSON.FName, PERSON.LName, CONTACT.Phone
+    FROM PERSON
+    INNER JOIN CONTACT ON PERSON.AadharNo = CONTACT.AadharNo
+    WHERE Phone = '8007445511';
+
+
+
+
+
+

@@ -1,0 +1,641 @@
+
+SQL*Plus: Release 11.2.0.1.0 Production on Sun Sep 4 10:50:48 2022
+
+Copyright (c) 1982, 2010, Oracle.  All rights reserved.
+
+Enter user-name: CS5A31
+Enter password:
+
+Connected to:
+Oracle Database 11g Enterprise Edition Release 11.2.0.1.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
+
+SQL> select * from emp;
+
+  EMP_CODE EMP_FNAME       EMP_LNAME       EMP_DOB   STORE_CODE     SALARY
+---------- --------------- --------------- --------- ---------- ----------
+        11 Kashish         Shukla          25-MAY-66         21      45000
+
+SQL> drop table region;
+drop table region
+           *
+ERROR at line 1:
+ORA-02449: unique/primary keys in table referenced by foreign keys
+
+
+SQL> drop table store;
+drop table store
+           *
+ERROR at line 1:
+ORA-02449: unique/primary keys in table referenced by foreign keys
+
+
+SQL> drop table emp;
+drop table emp
+           *
+ERROR at line 1:
+ORA-02449: unique/primary keys in table referenced by foreign keys
+
+
+SQL> DROP TABLE REGION CASCADE CONSTRAINTS;
+
+Table dropped.
+
+SQL> DROP TABLE EMP CASCADE CONSTRAINTS;
+
+Table dropped.
+
+SQL> DROP TABLE STORE CASCADE CONSTRAINTS;
+
+Table dropped.
+
+SQL> PURGE RECYCLEBIN;
+
+Recyclebin purged.
+
+SQL> CREATE TABLE REGION(
+  2      REGION_CODE NUMBER(1) NOT NULL,
+  3      REGION_DESC VARCHAR2(10) NOT NULL,
+  4      CONSTRAINT REGION_PK_REGION_CODE PRIMARY KEY (REGION_CODE),
+  5      CONSTRAINT REGION_CK_REGION_DESC CHECK (REGION_DESC IN ('East', 'West', 'North', 'South'))
+  6  );
+
+Table created.
+
+SQL> CREATE TABLE EMP(
+  2      EMP_CODE NUMBER(2) NOT NULL,
+  3      EMP_FNAME VARCHAR2(15) NOT NULL,
+  4      EMP_LNAME VARCHAR2(15) NOT NULL,
+  5      EMP_DOB DATE NOT NULL,
+  6      STORE_CODE NUMBER(2) NOT NULL,
+  7      SALARY NUMBER(5) NOT NULL,
+  8      CONSTRAINT EMP_PK_EMP_CODE PRIMARY KEY (EMP_CODE),
+  9      CONSTRAINT EMP_CK_SALARY CHECK (SALARY >= 1000)
+ 10  );
+
+Table created.
+
+SQL> CREATE TABLE STORE(
+  2      STORE_CODE NUMBER(2) NOT NULL,
+  3      STORE_NAME VARCHAR2(25) NOT NULL,
+  4      YID_SALES  NUMBER(9,2) DEFAULT 0 NOT NULL,
+  5      REGION_CODE NUMBER(1) NOT NULL,
+  6      EMP_CODE NUMBER(2),
+  7      CONSTRAINT STORE_PK_STORE_CODE PRIMARY KEY (STORE_CODE),
+  8      CONSTRAINT STORE_FK_REGION_CODE
+  9      FOREIGN KEY (REGION_CODE) REFERENCES REGION(REGION_CODE),
+ 10      CONSTRAINT STORE_FK_EMP_CODE FOREIGN KEY (EMP_CODE) REFERENCES EMP(EMP_CODE)
+ 11  );
+
+Table created.
+
+SQL> INSERT INTO REGION VALUES(1, 'East');
+
+1 row created.
+
+SQL>
+SQL> 1 row created.
+SQL>
+SQL> INSERT INTO REGION VALUES(2, 'West');
+
+1 row created.
+
+SQL>
+SQL> 1 row created.
+SQL>
+SQL> INSERT INTO REGION VALUES(3, 'North');
+
+1 row created.
+
+SQL>
+SQL> 1 row created.
+SQL>
+SQL> INSERT INTO REGION VALUES(4, 'South');
+
+1 row created.
+
+SQL> select * from region;
+
+REGION_CODE REGION_DES
+----------- ----------
+          1 East
+          2 West
+          3 North
+          4 South
+
+SQL> INSERT INTO EMP
+  2  VALUES(11, 'Kashish', 'Shukla', TO_DATE('1966-05-25','yyyy-mm-dd'), 21, 45000);
+
+1 row created.
+
+SQL>  INSERT INTO STORE VALUES(21, 'Success Joint', 1000555.76, 2, 11);
+
+1 row created.
+
+SQL>
+SQL> 1 row created.
+SQL>
+SQL> INSERT INTO STORE VALUES(22, 'Hexa Fountain', 1420000.34, 2, 11);
+
+1 row created.
+
+SQL>
+SQL> 1 row created.
+SQL>
+SQL> INSERT INTO STORE VALUES(11, 'Citizen Avenue', 986785.40, 1, 11);
+
+1 row created.
+
+SQL>
+SQL> 1 row created.
+SQL>
+SQL> INSERT INTO STORE VALUES(31, 'Lifestyle corner', 944568.66, 3, 11);
+
+1 row created.
+
+SQL>
+SQL> 1 row created.
+SQL>
+SQL> INSERT INTO STORE VALUES(12, 'Central Deluge', 2930098.35, 1, 11);
+
+1 row created.
+
+SQL>
+SQL> 1 row created.
+SQL>
+SQL> INSERT INTO STORE VALUES(41, 'Curiosity cluster', 568000.00, 4, 11);
+
+1 row created.
+
+SQL>
+SQL> 1 row created.
+SQL>
+SQL> ALTER TABLE EMP
+  2  ADD CONSTRAINT EMP_FK_STORE_CODE FOREIGN KEY (STORE_CODE) REFERENCES
+  3  STORE(STORE_CODE);
+
+Table altered.
+
+SQL>
+SQL> Table altered.
+SP2-0734: unknown command beginning "Table alte..." - rest of line ignored.
+SQL>
+SQL> UPDATE STORE
+  2    SET EMP_CODE=22
+  3    WHERE STORE_CODE=22;
+UPDATE STORE
+*
+ERROR at line 1:
+ORA-02291: integrity constraint (CS5A31.STORE_FK_EMP_CODE) violated - parent
+key not found
+
+
+SQL>
+SQL> 1 row updated.
+SQL>
+SQL> UPDATE STORE
+  2    SET EMP_CODE=13
+  3    WHERE STORE_CODE=11;
+UPDATE STORE
+*
+ERROR at line 1:
+ORA-02291: integrity constraint (CS5A31.STORE_FK_EMP_CODE) violated - parent
+key not found
+
+
+SQL>
+SQL> 1 row updated.
+SQL>
+SQL> UPDATE STORE
+  2    SET EMP_CODE=18
+  3    WHERE STORE_CODE=31;
+UPDATE STORE
+*
+ERROR at line 1:
+ORA-02291: integrity constraint (CS5A31.STORE_FK_EMP_CODE) violated - parent
+key not found
+
+
+SQL>
+SQL> 1 row updated.
+SQL>
+SQL> UPDATE STORE
+  2    SET EMP_CODE=17
+  3    WHERE STORE_CODE=12;
+UPDATE STORE
+*
+ERROR at line 1:
+ORA-02291: integrity constraint (CS5A31.STORE_FK_EMP_CODE) violated - parent
+key not found
+
+
+SQL>
+SQL> 1 row updated.
+SQL>
+SQL> UPDATE STORE
+  2    SET EMP_CODE=12
+  3    WHERE STORE_CODE=41;
+UPDATE STORE
+*
+ERROR at line 1:
+ORA-02291: integrity constraint (CS5A31.STORE_FK_EMP_CODE) violated - parent
+key not found
+
+
+SQL>
+SQL> 1 row updated.
+SQL> UPDATE STORE
+  2    SET EMP_CODE=22
+  3    WHERE STORE_CODE=22;
+UPDATE STORE
+*
+ERROR at line 1:
+ORA-02291: integrity constraint (CS5A31.STORE_FK_EMP_CODE) violated - parent
+key not found
+
+
+SQL>
+SQL> 1 row updated.
+SQL>
+SQL> UPDATE STORE
+  2    SET EMP_CODE=13
+  3    WHERE STORE_CODE=11;
+UPDATE STORE
+*
+ERROR at line 1:
+ORA-02291: integrity constraint (CS5A31.STORE_FK_EMP_CODE) violated - parent
+key not found
+
+
+SQL>
+SQL> 1 row updated.
+SQL>
+SQL> UPDATE STORE
+  2    SET EMP_CODE=18
+  3    WHERE STORE_CODE=31;
+UPDATE STORE
+*
+ERROR at line 1:
+ORA-02291: integrity constraint (CS5A31.STORE_FK_EMP_CODE) violated - parent
+key not found
+
+
+SQL>
+SQL> 1 row updated.
+SQL>
+SQL> UPDATE STORE
+  2    SET EMP_CODE=17
+  3    WHERE STORE_CODE=12;
+UPDATE STORE
+*
+ERROR at line 1:
+ORA-02291: integrity constraint (CS5A31.STORE_FK_EMP_CODE) violated - parent
+key not found
+
+
+SQL>
+SQL> 1 row updated.
+SQL>
+SQL> UPDATE STORE
+  2    SET EMP_CODE=12
+  3    WHERE STORE_CODE=41;
+UPDATE STORE
+*
+ERROR at line 1:
+ORA-02291: integrity constraint (CS5A31.STORE_FK_EMP_CODE) violated - parent
+key not found
+
+
+SQL>
+SQL> 1 row updated.
+SQL> select * from store;
+
+STORE_CODE STORE_NAME                 YID_SALES REGION_CODE   EMP_CODE
+---------- ------------------------- ---------- ----------- ----------
+        21 Success Joint             1000555.76           2         11
+        22 Hexa Fountain             1420000.34           2         11
+        11 Citizen Avenue              986785.4           1         11
+        31 Lifestyle corner           944568.66           3         11
+        12 Central Deluge            2930098.35           1         11
+        41 Curiosity cluster             568000           4         11
+
+6 rows selected.
+
+SQL> UPDATE STORE
+  2    SET EMP_CODE=22
+  3    WHERE STORE_CODE=22;
+UPDATE STORE
+*
+ERROR at line 1:
+ORA-02291: integrity constraint (CS5A31.STORE_FK_EMP_CODE) violated - parent
+key not found
+
+
+SQL> select * from emp;
+
+  EMP_CODE EMP_FNAME       EMP_LNAME       EMP_DOB   STORE_CODE     SALARY
+---------- --------------- --------------- --------- ---------- ----------
+        11 Kashish         Shukla          25-MAY-66         21      45000
+
+SQL> INSERT INTO EMP
+  2  VALUES(12, 'Aaron', 'Rocque', TO_DATE('2002-08-11','yyyy-mm-dd'), 41, 36000);
+
+1 row created.
+
+SQL>
+SQL> 1 row created.
+SQL>
+SQL> INSERT INTO EMP
+  2  VALUES(13, 'Gazhal', 'Singh', TO_DATE('1961-10-02','yyyy-mm-dd'), 11, 48000);
+
+1 row created.
+
+SQL>
+SQL> 1 row created.
+SQL>
+SQL> INSERT INTO EMP
+  2  VALUES(14, 'Mohana', 'Seth', TO_DATE('1971-06-01','yyyy-mm-dd'), 22, 27000);
+
+1 row created.
+
+SQL>
+SQL> 1 row created.
+SQL>
+SQL> INSERT INTO EMP
+  2  VALUES(15, 'Shashwat', 'Puri', TO_DATE('1959-06-23','yyyy-mm-dd'), 11, 25000);
+
+1 row created.
+
+SQL>
+SQL> 1 row created.
+SQL>
+SQL> INSERT INTO EMP
+  2  VALUES(16, 'Simon', 'Parera', TO_DATE('1960-09-03','yyyy-mm-dd'), 12, 25000);
+
+1 row created.
+
+SQL>
+SQL> 1 row created.
+SQL>
+SQL> INSERT INTO EMP
+  2  VALUES(17, 'Vikrant', 'Gokhale', TO_DATE('1962-07-31','yyyy-mm-dd'), 12, 38000);
+
+1 row created.
+
+SQL>
+SQL> 1 row created.
+SQL>
+SQL> INSERT INTO EMP
+  2  VALUES(18, 'Aarya', 'Mujumdar', TO_DATE('2001-12-06','yyyy-mm-dd'), 31, 38000);
+
+1 row created.
+
+SQL>
+SQL> 1 row created.
+SQL>
+SQL> INSERT INTO EMP
+  2  VALUES(19, 'Aparjita', 'Rakshak', TO_DATE('1968-09-10','yyyy-mm-dd'), 21, 30000);
+
+1 row created.
+
+SQL>
+SQL> 1 row created.
+SQL>
+SQL> INSERT INTO EMP
+  2  VALUES(20, 'Radhika', 'Ganesan', TO_DATE('1966-03-06','yyyy-mm-dd'), 11, 31000);
+
+1 row created.
+
+SQL>
+SQL> 1 row created.
+SQL>
+SQL> INSERT INTO EMP
+  2  VALUES(21, 'Pampa', 'Roy', TO_DATE('1974-12-11','yyyy-mm-dd'), 41, 36000);
+
+1 row created.
+
+SQL>
+SQL> 1 row created.
+SQL>
+SQL> INSERT INTO EMP
+  2  VALUES(22, 'Chanchal', 'Bhati', TO_DATE('1974-09-08','yyyy-mm-dd'), 22, 40000);
+
+1 row created.
+
+SQL>
+SQL> 1 row created.
+SQL>
+SQL> INSERT INTO EMP
+  2  VALUES(23, 'Srinivas', 'Reddy', TO_DATE('1964-08-25','yyyy-mm-dd'), 31, 26000);
+
+1 row created.
+
+SQL>
+SQL> 1 row created.
+SQL>
+SQL> INSERT INTO EMP
+  2  VALUES(24, 'Vallabh', 'Roy', TO_DATE('1974-12-11','yyyy-mm-dd'), 41, 32000);
+
+1 row created.
+
+SQL>
+SQL> 1 row created.
+SQL>
+SQL> INSERT INTO EMP
+  2  VALUES(25, 'Bahar', 'Mirpuri', TO_DATE('1969-02-09','yyyy-mm-dd'), 22, 29000);
+
+1 row created.
+
+SQL>
+SQL> 1 row created.
+SQL>
+SQL> UPDATE STORE
+  2    SET EMP_CODE=22
+  3    WHERE STORE_CODE=22;
+
+1 row updated.
+
+SQL>
+SQL> 1 row updated.
+SQL>
+SQL> UPDATE STORE
+  2    SET EMP_CODE=13
+  3    WHERE STORE_CODE=11;
+
+1 row updated.
+
+SQL>
+SQL> 1 row updated.
+SQL>
+SQL> UPDATE STORE
+  2    SET EMP_CODE=18
+  3    WHERE STORE_CODE=31;
+
+1 row updated.
+
+SQL>
+SQL> 1 row updated.
+SQL>
+SQL> UPDATE STORE
+  2    SET EMP_CODE=17
+  3    WHERE STORE_CODE=12;
+
+1 row updated.
+
+SQL>
+SQL> 1 row updated.
+SQL>
+SQL> UPDATE STORE
+  2    SET EMP_CODE=12
+  3    WHERE STORE_CODE=41;
+
+1 row updated.
+
+SQL>
+SQL> 1 row updated.
+SQL> select * region;
+select * region
+         *
+ERROR at line 1:
+ORA-00923: FROM keyword not found where expected
+
+
+SQL> select * from region;
+
+REGION_CODE REGION_DES
+----------- ----------
+          1 East
+          2 West
+          3 North
+          4 South
+
+SQL> select * from emp;
+
+  EMP_CODE EMP_FNAME       EMP_LNAME       EMP_DOB   STORE_CODE     SALARY
+---------- --------------- --------------- --------- ---------- ----------
+        11 Kashish         Shukla          25-MAY-66         21      45000
+        12 Aaron           Rocque          11-AUG-02         41      36000
+        13 Gazhal          Singh           02-OCT-61         11      48000
+        14 Mohana          Seth            01-JUN-71         22      27000
+        15 Shashwat        Puri            23-JUN-59         11      25000
+        16 Simon           Parera          03-SEP-60         12      25000
+        17 Vikrant         Gokhale         31-JUL-62         12      38000
+        18 Aarya           Mujumdar        06-DEC-01         31      38000
+        19 Aparjita        Rakshak         10-SEP-68         21      30000
+        20 Radhika         Ganesan         06-MAR-66         11      31000
+        21 Pampa           Roy             11-DEC-74         41      36000
+
+  EMP_CODE EMP_FNAME       EMP_LNAME       EMP_DOB   STORE_CODE     SALARY
+---------- --------------- --------------- --------- ---------- ----------
+        22 Chanchal        Bhati           08-SEP-74         22      40000
+        23 Srinivas        Reddy           25-AUG-64         31      26000
+        24 Vallabh         Roy             11-DEC-74         41      32000
+        25 Bahar           Mirpuri         09-FEB-69         22      29000
+
+15 rows selected.
+
+SQL> set pagesize 59;
+SQL> select * from emp;
+
+  EMP_CODE EMP_FNAME       EMP_LNAME       EMP_DOB   STORE_CODE     SALARY
+---------- --------------- --------------- --------- ---------- ----------
+        11 Kashish         Shukla          25-MAY-66         21      45000
+        12 Aaron           Rocque          11-AUG-02         41      36000
+        13 Gazhal          Singh           02-OCT-61         11      48000
+        14 Mohana          Seth            01-JUN-71         22      27000
+        15 Shashwat        Puri            23-JUN-59         11      25000
+        16 Simon           Parera          03-SEP-60         12      25000
+        17 Vikrant         Gokhale         31-JUL-62         12      38000
+        18 Aarya           Mujumdar        06-DEC-01         31      38000
+        19 Aparjita        Rakshak         10-SEP-68         21      30000
+        20 Radhika         Ganesan         06-MAR-66         11      31000
+        21 Pampa           Roy             11-DEC-74         41      36000
+        22 Chanchal        Bhati           08-SEP-74         22      40000
+        23 Srinivas        Reddy           25-AUG-64         31      26000
+        24 Vallabh         Roy             11-DEC-74         41      32000
+        25 Bahar           Mirpuri         09-FEB-69         22      29000
+
+15 rows selected.
+
+SQL> select * from store;
+
+STORE_CODE STORE_NAME                 YID_SALES REGION_CODE   EMP_CODE
+---------- ------------------------- ---------- ----------- ----------
+        21 Success Joint             1000555.76           2         11
+        22 Hexa Fountain             1420000.34           2         22
+        11 Citizen Avenue              986785.4           1         13
+        31 Lifestyle corner           944568.66           3         18
+        12 Central Deluge            2930098.35           1         17
+        41 Curiosity cluster             568000           4         12
+
+6 rows selected.
+
+SQL> SELECT SYSTIMESTAMP AS "NOW" FROM DUAL;
+
+NOW
+---------------------------------------------------------------------------
+04-SEP-22 11.17.31.599000 AM +05:30
+
+SQL> SELECT EMP_FNAME, EMP_LNAME, SALARY FROM EMP WHERE SALARY<35000;
+
+EMP_FNAME       EMP_LNAME           SALARY
+--------------- --------------- ----------
+Mohana          Seth                 27000
+Shashwat        Puri                 25000
+Simon           Parera               25000
+Aparjita        Rakshak              30000
+Radhika         Ganesan              31000
+Srinivas        Reddy                26000
+Vallabh         Roy                  32000
+Bahar           Mirpuri              29000
+
+8 rows selected.
+
+SQL> SELECT EMP_FNAME, EMP_LNAME, EMP_DOB, STORE.REGION_CODE
+  2  FROM EMP JOIN STORE USING(STORE_CODE)
+  3  WHERE EMP_DOB<'01-JAN-1972' AND STORE.REGION_CODE=2;
+
+EMP_FNAME       EMP_LNAME       EMP_DOB   REGION_CODE
+--------------- --------------- --------- -----------
+Kashish         Shukla          25-MAY-66           2
+Mohana          Seth            01-JUN-71           2
+Aparjita        Rakshak         10-SEP-68           2
+Bahar           Mirpuri         09-FEB-69           2
+
+SQL> SELECT EMP.EMP_FNAME, EMP.EMP_LNAME, STORE.STORE_NAME
+  2  FROM STORE JOIN EMP USING(STORE_CODE)
+  3  WHERE EMP.EMP_CODE = STORE.EMP_CODE;
+
+EMP_FNAME       EMP_LNAME       STORE_NAME
+--------------- --------------- -------------------------
+Kashish         Shukla          Success Joint
+Aaron           Rocque          Curiosity cluster
+Gazhal          Singh           Citizen Avenue
+Vikrant         Gokhale         Central Deluge
+Aarya           Mujumdar        Lifestyle corner
+Chanchal        Bhati           Hexa Fountain
+
+6 rows selected.
+
+SQL>
+SQL> SELECT STORE.STORE_CODE, STORE.STORE_NAME, REGION.REGION_DESC
+  2  FROM STORE JOIN REGION USING(REGION_CODE);
+
+STORE_CODE STORE_NAME                REGION_DES
+---------- ------------------------- ----------
+        21 Success Joint             West
+        22 Hexa Fountain             West
+        11 Citizen Avenue            East
+        31 Lifestyle corner          North
+        12 Central Deluge            East
+        41 Curiosity cluster         South
+
+6 rows selected.
+
+SQL> coomit;
+SP2-0042: unknown command "coomit" - rest of line ignored.
+SQL> commit;
+
+Commit complete.
+
+SQL>

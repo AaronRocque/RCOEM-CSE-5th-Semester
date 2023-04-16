@@ -1,0 +1,855 @@
+
+SQL*Plus: Release 11.2.0.1.0 Production on Thu Aug 25 16:01:46 2022
+
+Copyright (c) 1982, 2010, Oracle.  All rights reserved.
+
+Enter user-name: CS5A31
+Enter password:
+
+Connected to:
+Oracle Database 11g Enterprise Edition Release 11.2.0.1.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
+
+SQL> Select * from person
+  2
+SQL> Select * from person;
+
+  AADHARNO FNAME           LNAME           G BIRTHDATE    PINCODE
+---------- --------------- --------------- - --------- ----------
+EMAIL
+-----------------------------------
+1.0000E+11 Aaron           Rocque          M 11-AUG-02     440001
+rocqueae@rknec.edu
+
+1.0000E+11 Jon             Snow            M 03-FEB-93     440020
+snowj@rknec.edu
+
+1.0000E+11 Robb            Stark           M 12-DEC-04     540001
+starkr@rknec.edu
+
+
+  AADHARNO FNAME           LNAME           G BIRTHDATE    PINCODE
+---------- --------------- --------------- - --------- ----------
+EMAIL
+-----------------------------------
+1.0000E+11 Rory            Gilmore         F 18-SEP-04     590001
+gilmorer@rknec.edu
+
+1.0000E+11 Cersie          Lannister       F 30-JAN-89     590801
+lannisterc@rknec.edu
+
+
+SQL> set linesize 200
+SQL> set pagesize 100
+SQL> Select * from person;
+
+  AADHARNO FNAME           LNAME           G BIRTHDATE    PINCODE EMAIL
+---------- --------------- --------------- - --------- ---------- -----------------------------------
+1.0000E+11 Aaron           Rocque          M 11-AUG-02     440001 rocqueae@rknec.edu
+1.0000E+11 Jon             Snow            M 03-FEB-93     440020 snowj@rknec.edu
+1.0000E+11 Robb            Stark           M 12-DEC-04     540001 starkr@rknec.edu
+1.0000E+11 Rory            Gilmore         F 18-SEP-04     590001 gilmorer@rknec.edu
+1.0000E+11 Cersie          Lannister       F 30-JAN-89     590801 lannisterc@rknec.edu
+
+SQL> UPDATE PERSON
+  2  SET AADHARNO = 100000001
+  3  WHERE FNAME = 'Aaron';
+
+1 row updated.
+
+SQL> Select * from person;
+
+  AADHARNO FNAME           LNAME           G BIRTHDATE    PINCODE EMAIL
+---------- --------------- --------------- - --------- ---------- -----------------------------------
+ 100000001 Aaron           Rocque          M 11-AUG-02     440001 rocqueae@rknec.edu
+1.0000E+11 Jon             Snow            M 03-FEB-93     440020 snowj@rknec.edu
+1.0000E+11 Robb            Stark           M 12-DEC-04     540001 starkr@rknec.edu
+1.0000E+11 Rory            Gilmore         F 18-SEP-04     590001 gilmorer@rknec.edu
+1.0000E+11 Cersie          Lannister       F 30-JAN-89     590801 lannisterc@rknec.edu
+
+SQL> UPDATE PERSON
+  2  SET AADHARNO = 100000002
+  3  WHERE FNAME = 'Jon';
+
+1 row updated.
+
+SQL> UPDATE PERSON
+  2  SET AADHARNO = 100000003
+  3  WHERE FNAME = 'Robb';-
+  4
+SQL> UPDATE PERSON
+  2  SET AADHARNO = 100000004
+  3  WHERE FNAME = 'Rory';
+
+1 row updated.
+
+SQL>
+SQL> UPDATE PERSON
+  2  SET AADHARNO = 100000005
+  3  WHERE FNAME = 'Cersie';
+
+1 row updated.
+
+SQL> Select * from person;
+
+  AADHARNO FNAME           LNAME           G BIRTHDATE    PINCODE EMAIL
+---------- --------------- --------------- - --------- ---------- -----------------------------------
+ 100000001 Aaron           Rocque          M 11-AUG-02     440001 rocqueae@rknec.edu
+ 100000002 Jon             Snow            M 03-FEB-93     440020 snowj@rknec.edu
+1.0000E+11 Robb            Stark           M 12-DEC-04     540001 starkr@rknec.edu
+ 100000004 Rory            Gilmore         F 18-SEP-04     590001 gilmorer@rknec.edu
+ 100000005 Cersie          Lannister       F 30-JAN-89     590801 lannisterc@rknec.edu
+
+SQL> UPDATE PERSON
+  2    2  SET AADHARNO = 100000003
+  3    3  WHERE FNAME = 'Robb';-^Z
+
+  4
+SQL>
+SQL> UPDATE PERSON
+  2  SET AADHARNO = 100000003
+  3  WHERE FNAME = 'Robb';
+
+1 row updated.
+
+SQL> Select * from person;
+
+  AADHARNO FNAME           LNAME           G BIRTHDATE    PINCODE EMAIL
+---------- --------------- --------------- - --------- ---------- -----------------------------------
+ 100000001 Aaron           Rocque          M 11-AUG-02     440001 rocqueae@rknec.edu
+ 100000002 Jon             Snow            M 03-FEB-93     440020 snowj@rknec.edu
+ 100000003 Robb            Stark           M 12-DEC-04     540001 starkr@rknec.edu
+ 100000004 Rory            Gilmore         F 18-SEP-04     590001 gilmorer@rknec.edu
+ 100000005 Cersie          Lannister       F 30-JAN-89     590801 lannisterc@rknec.edu
+
+SQL> CREATE TABLE CONTACT(
+  2  AadharNo NUMBER(12) NOT NULL,
+  3  Phone NUMBER(10) NOT NULL,
+  4  CONSTRAINT CONTACT_PK_AadharNo PRIMARY KEY (AadharNo),
+  5  CONSTRAINT CONTACT_FK_PERSON_AadharNo FOREIGN KEY (AadharNo) REFERENCES PERSON (AadharNo)
+  6  );
+CREATE TABLE CONTACT(
+             *
+ERROR at line 1:
+ORA-00955: name is already used by an existing object
+
+
+SQL> select * from contact;
+
+no rows selected
+
+SQL> DROP TABLE CONTACT;
+
+Table dropped.
+
+SQL> CREATE TABLE CONTACT(
+  2  AadharNo NUMBER(12) NOT NULL,
+  3  Phone NUMBER(10) NOT NULL,
+  4  CONSTRAINT CONTACT_PK_AadharNo PRIMARY KEY (AadharNo),
+  5  CONSTRAINT CONTACT_PK_Phone PRIMARY KEY (Phone),
+  6  CONSTRAINT CONTACT_FK_PERSON_AadharNo FOREIGN KEY (AadharNo) REFERENCES PERSON (AadharNo)
+  7  );
+CONSTRAINT CONTACT_PK_Phone PRIMARY KEY (Phone),
+                            *
+ERROR at line 5:
+ORA-02260: table can have only one primary key
+
+
+SQL> CREATE TABLE CONTACT(
+  2  AadharNo NUMBER(12) NOT NULL,
+  3  Phone NUMBER(10) NOT NULL,
+  4  CONSTRAINT CONTACT_PK_Phone PRIMARY KEY (Phone),
+  5  CONSTRAINT CONTACT_FK_PERSON_AadharNo FOREIGN KEY (AadharNo) REFERENCES PERSON (AadharNo)
+  6  );
+
+Table created.
+
+SQL> INSERT INTO CONTACT VALUES (100000001, 800744551);
+
+1 row created.
+
+SQL> INSERT INTO CONTACT VALUES (100000001, 902100311);
+
+1 row created.
+
+SQL> select * from contact;
+
+  AADHARNO      PHONE
+---------- ----------
+ 100000001  800744551
+ 100000001  902100311
+
+SQL> INSERT INTO CONTACT VALUES (100000002, 955275337);
+
+1 row created.
+
+SQL> INSERT INTO CONTACT VALUES (100000003, 992325504);
+
+1 row created.
+
+SQL> INSERT INTO CONTACT VALUES (100000003, 770931784);
+
+1 row created.
+
+SQL> INSERT INTO CONTACT VALUES (100000004, 902136985);
+
+1 row created.
+
+SQL> INSERT INTO CONTACT VALUES (100000004, 976743829);
+
+1 row created.
+
+SQL> INSERT INTO CONTACT VALUES (100000004, 950341784);
+
+1 row created.
+
+SQL> INSERT INTO CONTACT VALUES (100000005, 880514796);
+
+1 row created.
+
+SQL> select * from contact;
+
+  AADHARNO      PHONE
+---------- ----------
+ 100000001  800744551
+ 100000001  902100311
+ 100000002  955275337
+ 100000003  992325504
+ 100000003  770931784
+ 100000004  902136985
+ 100000004  976743829
+ 100000004  950341784
+ 100000005  880514796
+
+9 rows selected.
+
+SQL> commit;
+
+Commit complete.
+
+SQL> select * from person;
+
+  AADHARNO FNAME           LNAME           G BIRTHDATE    PINCODE EMAIL
+---------- --------------- --------------- - --------- ---------- -----------------------------------
+ 100000001 Aaron           Rocque          M 11-AUG-02     440001 rocqueae@rknec.edu
+ 100000002 Jon             Snow            M 03-FEB-93     440020 snowj@rknec.edu
+ 100000003 Robb            Stark           M 12-DEC-04     540001 starkr@rknec.edu
+ 100000004 Rory            Gilmore         F 18-SEP-04     590001 gilmorer@rknec.edu
+ 100000005 Cersie          Lannister       F 30-JAN-89     590801 lannisterc@rknec.edu
+
+SQL> SELECT FNAME, LANME
+  2
+SQL> SELECT FName, LName, G, Pincode, Email from PERSON;
+SELECT FName, LName, G, Pincode, Email from PERSON
+                     *
+ERROR at line 1:
+ORA-00904: "G": invalid identifier
+
+
+SQL> SELECT FName, LName, Gender, Pincode, Email from PERSON;
+
+FNAME           LNAME           G    PINCODE EMAIL
+--------------- --------------- - ---------- -----------------------------------
+Aaron           Rocque          M     440001 rocqueae@rknec.edu
+Jon             Snow            M     440020 snowj@rknec.edu
+Robb            Stark           M     540001 starkr@rknec.edu
+Rory            Gilmore         F     590001 gilmorer@rknec.edu
+Cersie          Lannister       F     590801 lannisterc@rknec.edu
+
+SQL> SELECT FName, LName, Phone from PERSON, CONTACT;
+
+FNAME           LNAME                PHONE
+--------------- --------------- ----------
+Aaron           Rocque           770931784
+Aaron           Rocque           800744551
+Aaron           Rocque           880514796
+Aaron           Rocque           902100311
+Aaron           Rocque           902136985
+Aaron           Rocque           950341784
+Aaron           Rocque           955275337
+Aaron           Rocque           976743829
+Aaron           Rocque           992325504
+Jon             Snow             770931784
+Jon             Snow             800744551
+Jon             Snow             880514796
+Jon             Snow             902100311
+Jon             Snow             902136985
+Jon             Snow             950341784
+Jon             Snow             955275337
+Jon             Snow             976743829
+Jon             Snow             992325504
+Robb            Stark            770931784
+Robb            Stark            800744551
+Robb            Stark            880514796
+Robb            Stark            902100311
+Robb            Stark            902136985
+Robb            Stark            950341784
+Robb            Stark            955275337
+Robb            Stark            976743829
+Robb            Stark            992325504
+Rory            Gilmore          770931784
+Rory            Gilmore          800744551
+Rory            Gilmore          880514796
+Rory            Gilmore          902100311
+Rory            Gilmore          902136985
+Rory            Gilmore          950341784
+Rory            Gilmore          955275337
+Rory            Gilmore          976743829
+Rory            Gilmore          992325504
+Cersie          Lannister        770931784
+Cersie          Lannister        800744551
+Cersie          Lannister        880514796
+Cersie          Lannister        902100311
+Cersie          Lannister        902136985
+Cersie          Lannister        950341784
+Cersie          Lannister        955275337
+Cersie          Lannister        976743829
+Cersie          Lannister        992325504
+
+45 rows selected.
+
+SQL> SELECT FName, LName, Phone from PERSON, CONTACT
+  2  WHERE FName = 'Aaron';
+
+FNAME           LNAME                PHONE
+--------------- --------------- ----------
+Aaron           Rocque           770931784
+Aaron           Rocque           800744551
+Aaron           Rocque           880514796
+Aaron           Rocque           902100311
+Aaron           Rocque           902136985
+Aaron           Rocque           950341784
+Aaron           Rocque           955275337
+Aaron           Rocque           976743829
+Aaron           Rocque           992325504
+
+9 rows selected.
+
+SQL> SELECT FName, LName, Phone, AadharNo from PERSON, CONTACT
+  2  WHERE FName = 'Aaron';
+SELECT FName, LName, Phone, AadharNo from PERSON, CONTACT
+                            *
+ERROR at line 1:
+ORA-00918: column ambiguously defined
+
+
+SQL> SELECT PERSON.FName, PERSON.LName, CONTACT.Phone
+  2  FROM PERSON
+  3  INNER JOIN CONTACT ON PERSON.AadharNo = CONTACT.AadharNo;
+
+FNAME           LNAME                PHONE
+--------------- --------------- ----------
+Aaron           Rocque           800744551
+Aaron           Rocque           902100311
+Jon             Snow             955275337
+Robb            Stark            992325504
+Robb            Stark            770931784
+Rory            Gilmore          902136985
+Rory            Gilmore          976743829
+Rory            Gilmore          950341784
+Cersie          Lannister        880514796
+
+9 rows selected.
+
+SQL> SELECT PERSON.FName, PERSON.LName, CONTACT.Phone
+  2  FROM PERSON
+  3  WHERE FName = 'Aaron'
+  4  INNER JOIN CONTACT ON PERSON.AadharNo = CONTACT.AadharNo;
+INNER JOIN CONTACT ON PERSON.AadharNo = CONTACT.AadharNo
+*
+ERROR at line 4:
+ORA-00933: SQL command not properly ended
+
+
+SQL>
+SQL> SELECT PERSON.FName, PERSON.LName, CONTACT.Phone
+  2  FROM PERSON
+  3  INNER JOIN CONTACT ON PERSON.AadharNo = CONTACT.AadharNo
+  4  WHERE FName = 'Aaron';
+
+FNAME           LNAME                PHONE
+--------------- --------------- ----------
+Aaron           Rocque           800744551
+Aaron           Rocque           902100311
+
+SQL>
+SQL> INSERT INTO PERSON VALUES (100000000006,'Drake', 'Rocque', 'M', '05-MAY-1997', 599801,'rocqued@rknec.edu');
+
+1 row created.
+
+SQL> INSERT INTO PERSON VALUES (100000000006,'Hannah', 'Rocque', 'F', '22-OCT-2004', 899801,'rocqueh@rknec.edu');
+INSERT INTO PERSON VALUES (100000000006,'Hannah', 'Rocque', 'F', '22-OCT-2004', 899801,'rocqueh@rknec.edu')
+*
+ERROR at line 1:
+ORA-00001: unique constraint (CS5A31.PERSON_PK_AADHARNO) violated
+
+
+SQL> INSERT INTO PERSON VALUES (100000000007,'Hannah', 'Rocque', 'F', '22-OCT-2004', 899801,'rocqueh@rknec.edu');
+
+1 row created.
+
+SQL> select * from person;
+
+  AADHARNO FNAME           LNAME           G BIRTHDATE    PINCODE EMAIL
+---------- --------------- --------------- - --------- ---------- -----------------------------------
+1.0000E+11 Drake           Rocque          M 05-MAY-97     599801 rocqued@rknec.edu
+1.0000E+11 Hannah          Rocque          F 22-OCT-04     899801 rocqueh@rknec.edu
+ 100000001 Aaron           Rocque          M 11-AUG-02     440001 rocqueae@rknec.edu
+ 100000002 Jon             Snow            M 03-FEB-93     440020 snowj@rknec.edu
+ 100000003 Robb            Stark           M 12-DEC-04     540001 starkr@rknec.edu
+ 100000004 Rory            Gilmore         F 18-SEP-04     590001 gilmorer@rknec.edu
+ 100000005 Cersie          Lannister       F 30-JAN-89     590801 lannisterc@rknec.edu
+
+7 rows selected.
+
+SQL>
+SQL> UPDATE PERSON
+  2  SET AADHARNO = 100000006
+  3  WHERE FNAME = 'Drake';
+
+1 row updated.
+
+SQL> UPDATE PERSON
+  2  SET AADHARNO = 100000007
+  3  WHERE FNAME = 'Hannah';
+
+1 row updated.
+
+SQL> select * from person;
+
+  AADHARNO FNAME           LNAME           G BIRTHDATE    PINCODE EMAIL
+---------- --------------- --------------- - --------- ---------- -----------------------------------
+ 100000006 Drake           Rocque          M 05-MAY-97     599801 rocqued@rknec.edu
+ 100000007 Hannah          Rocque          F 22-OCT-04     899801 rocqueh@rknec.edu
+ 100000001 Aaron           Rocque          M 11-AUG-02     440001 rocqueae@rknec.edu
+ 100000002 Jon             Snow            M 03-FEB-93     440020 snowj@rknec.edu
+ 100000003 Robb            Stark           M 12-DEC-04     540001 starkr@rknec.edu
+ 100000004 Rory            Gilmore         F 18-SEP-04     590001 gilmorer@rknec.edu
+ 100000005 Cersie          Lannister       F 30-JAN-89     590801 lannisterc@rknec.edu
+
+7 rows selected.
+
+SQL> INSERT INTO CONTACT VALUES (100000006, 911949616);
+
+1 row created.
+
+SQL> INSERT INTO CONTACT VALUES (100000007, 808021419);
+
+1 row created.
+
+SQL> select * from contact;
+
+  AADHARNO      PHONE
+---------- ----------
+ 100000001  800744551
+ 100000001  902100311
+ 100000002  955275337
+ 100000003  992325504
+ 100000003  770931784
+ 100000004  902136985
+ 100000004  976743829
+ 100000004  950341784
+ 100000005  880514796
+ 100000006  911949616
+ 100000007  808021419
+
+11 rows selected.
+
+SQL> SELECT PERSON.FName, PERSON.LName, CONTACT.Phone
+  2  FROM PERSON
+  3  INNER JOIN CONTACT ON PERSON.AadharNo = CONTACT.AadharNo
+  4  WHERE LName = 'Rocque';
+
+FNAME           LNAME                PHONE
+--------------- --------------- ----------
+Aaron           Rocque           800744551
+Aaron           Rocque           902100311
+Drake           Rocque           911949616
+Hannah          Rocque           808021419
+
+SQL> INSERT INTO CONTACT VALUES (100000002, 800744551);
+INSERT INTO CONTACT VALUES (100000002, 800744551)
+*
+ERROR at line 1:
+ORA-00001: unique constraint (CS5A31.CONTACT_PK_PHONE) violated
+
+
+SQL> INSERT INTO CONTACT VALUES (100000002, 800755882);
+
+1 row created.
+
+SQL> SELECT PERSON.FName, PERSON.LName, CONTACT.Phone
+  2  FROM PERSON
+  3  INNER JOIN CONTACT ON PERSON.AadharNo = CONTACT.AadharNo
+  4  WHERE Phone = '800744551';
+
+FNAME           LNAME                PHONE
+--------------- --------------- ----------
+Aaron           Rocque           800744551
+
+SQL> UPDATE CONTACT
+  2  SET Phone = 8007445511
+  3  WHERE AADHARNO = 100000001;
+UPDATE CONTACT
+*
+ERROR at line 1:
+ORA-00001: unique constraint (CS5A31.CONTACT_PK_PHONE) violated
+
+
+SQL> UPDATE CONTACT
+  2  SET Phone = 8007445511
+  3  WHERE Phone = 800744551;
+
+1 row updated.
+
+SQL> select * from person;
+
+  AADHARNO FNAME           LNAME           G BIRTHDATE    PINCODE EMAIL
+---------- --------------- --------------- - --------- ---------- -----------------------------------
+ 100000006 Drake           Rocque          M 05-MAY-97     599801 rocqued@rknec.edu
+ 100000007 Hannah          Rocque          F 22-OCT-04     899801 rocqueh@rknec.edu
+ 100000001 Aaron           Rocque          M 11-AUG-02     440001 rocqueae@rknec.edu
+ 100000002 Jon             Snow            M 03-FEB-93     440020 snowj@rknec.edu
+ 100000003 Robb            Stark           M 12-DEC-04     540001 starkr@rknec.edu
+ 100000004 Rory            Gilmore         F 18-SEP-04     590001 gilmorer@rknec.edu
+ 100000005 Cersie          Lannister       F 30-JAN-89     590801 lannisterc@rknec.edu
+
+7 rows selected.
+
+SQL> select * from contact;
+
+  AADHARNO      PHONE
+---------- ----------
+ 100000001 8007445511
+ 100000001  902100311
+ 100000002  955275337
+ 100000003  992325504
+ 100000003  770931784
+ 100000004  902136985
+ 100000004  976743829
+ 100000004  950341784
+ 100000005  880514796
+ 100000006  911949616
+ 100000007  808021419
+ 100000002  800755882
+
+12 rows selected.
+
+SQL> UPDATE CONTACT
+  2  SET Phone = 9021003113
+  3  WHERE Phone = 902100311;
+
+1 row updated.
+
+SQL> UPDATE CONTACT
+  2  SET Phone = 9552753374
+  3  WHERE Phone = 955275337;
+
+1 row updated.
+
+SQL> UPDATE CONTACT
+  2  SET Phone = 9923255045
+  3  WHERE Phone = 992325504;
+
+1 row updated.
+
+SQL> UPDATE CONTACT
+  2  SET Phone = 7709317846
+  3  WHERE Phone = 770931784;
+
+1 row updated.
+
+SQL>
+SQL> UPDATE CONTACT
+  2  SET Phone = 9021369858
+  3  WHERE Phone = 902136985;
+
+1 row updated.
+
+SQL> UPDATE CONTACT
+  2  SET Phone = 9767438292
+  3  WHERE Phone = 976743829;
+
+1 row updated.
+
+SQL> select * from contact;
+
+  AADHARNO      PHONE
+---------- ----------
+ 100000001 8007445511
+ 100000001 9021003113
+ 100000002 9552753374
+ 100000003 9923255045
+ 100000003 7709317846
+ 100000004 9021369858
+ 100000004 9767438292
+ 100000004  950341784
+ 100000005  880514796
+ 100000006  911949616
+ 100000007  808021419
+ 100000002  800755882
+
+12 rows selected.
+
+SQL> UPDATE CONTACT
+  2  SET Phone = 9503417843
+  3  WHERE Phone = 950341784;
+
+1 row updated.
+
+SQL>
+SQL> UPDATE CONTACT
+  2  SET Phone = 8805147960
+  3  WHERE Phone = 880514796;
+
+1 row updated.
+
+SQL> UPDATE CONTACT
+  2  SET Phone = 9119496163
+  3  WHERE Phone = 911949616;
+
+1 row updated.
+
+SQL> UPDATE CONTACT
+  2  SET Phone = 8080214195
+  3  WHERE Phone = 808021419;
+
+1 row updated.
+
+SQL>
+SQL> UPDATE CONTACT
+  2  SET Phone = 8007558825;
+UPDATE CONTACT
+*
+ERROR at line 1:
+ORA-00001: unique constraint (CS5A31.CONTACT_PK_PHONE) violated
+
+
+SQL>
+SQL> UPDATE CONTACT
+  2  SET Phone = 8007558825;
+UPDATE CONTACT
+*
+ERROR at line 1:
+ORA-00001: unique constraint (CS5A31.CONTACT_PK_PHONE) violated
+
+
+SQL> UPDATE CONTACT
+  2  SET Phone = 8007558825;
+UPDATE CONTACT
+*
+ERROR at line 1:
+ORA-00001: unique constraint (CS5A31.CONTACT_PK_PHONE) violated
+
+
+SQL> UPDATE CONTACT
+  2  SET Phone = 8007558825
+  3  WHERE Phone = 800755882;
+
+1 row updated.
+
+SQL> select * from contact
+  2  select * from contact;
+select * from contact
+*
+ERROR at line 2:
+ORA-00933: SQL command not properly ended
+
+
+SQL> select * from contact;
+
+  AADHARNO      PHONE
+---------- ----------
+ 100000001 8007445511
+ 100000001 9021003113
+ 100000002 9552753374
+ 100000003 9923255045
+ 100000003 7709317846
+ 100000004 9021369858
+ 100000004 9767438292
+ 100000004 9503417843
+ 100000005 8805147960
+ 100000006 9119496163
+ 100000007 8080214195
+ 100000002 8007558825
+
+12 rows selected.
+
+SQL> SELECT PERSON.FName, PERSON.LName, CONTACT.Phone
+  2  FROM PERSON
+  3  INNER JOIN CONTACT ON PERSON.AadharNo = CONTACT.AadharNo
+  4  WHERE Phone = '8007445511';
+
+FNAME           LNAME                PHONE
+--------------- --------------- ----------
+Aaron           Rocque          8007445511
+
+SQL>
+SQL> CREATE TABLE PERSON(
+  2  AadharNo NUMBER(12) NOT NULL,
+  3  FName VARCHAR(15) NOT NULL,
+  4  LName VARCHAR(15) NOT NULL,
+  5  Gender CHAR(1) NOT NULL,
+  6  BirthDate DATE DEFAULT (SYSDATE - (365*18)) NOT NULL,
+  7  PinCode NUMBER(6),
+  8  Email VARCHAR(35),
+  9  CONSTRAINT PERSON_PK_AadharNo PRIMARY KEY (AadharNo),
+ 10  CONSTRAINT PERSON_CK_Gender CHECK (GENDER IN ('M','F','m','f'))
+ 11  );
+CREATE TABLE PERSON(
+             *
+ERROR at line 1:
+ORA-00955: name is already used by an existing object
+
+
+SQL> CREATE TABLE CONTACT(
+  2  AadharNo NUMBER(12) NOT NULL,
+  3  Phone NUMBER(10) NOT NULL,
+  4  CONSTRAINT CONTACT_PK_Phone PRIMARY KEY (Phone),
+  5  CONSTRAINT CONTACT_FK_PERSON_AadharNo FOREIGN KEY (AadharNo) REFERENCES PERSON (AadharNo)
+  6  );
+CREATE TABLE CONTACT(
+             *
+ERROR at line 1:
+ORA-00955: name is already used by an existing object
+
+
+SQL>
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> DESC PERSON
+ Name
+                                   Null?    Type
+ ----------------------------------------------------------------------------------------------------------------- -------- ----------------------------------------------------------------------------
+ AADHARNO
+                                   NOT NULL NUMBER(12)
+ FNAME
+                                   NOT NULL VARCHAR2(15)
+ LNAME
+                                   NOT NULL VARCHAR2(15)
+ GENDER
+                                   NOT NULL CHAR(1)
+ BIRTHDATE
+                                   NOT NULL DATE
+ PINCODE
+                                            NUMBER(6)
+ EMAIL
+                                            VARCHAR2(35)
+
+SQL> DESC PERSON;
+ Name                                                                                                              Null?    Type
+ ----------------------------------------------------------------------------------------------------------------- -------- ----------------------------------------------------------------------------
+ AADHARNO                                                                                                          NOT NULL NUMBER(12)
+ FNAME                                                                                                             NOT NULL VARCHAR2(15)
+ LNAME                                                                                                             NOT NULL VARCHAR2(15)
+ GENDER                                                                                                            NOT NULL CHAR(1)
+ BIRTHDATE                                                                                                         NOT NULL DATE
+ PINCODE                                                                                                                    NUMBER(6)
+ EMAIL                                                                                                                      VARCHAR2(35)
+
+SQL> DESC PERSON;
+ Name                                                                                                              Null?    Type
+ ----------------------------------------------------------------------------------------------------------------- -------- ----------------------------------------------------------------------------
+ AADHARNO                                                                                                          NOT NULL NUMBER(12)
+ FNAME                                                                                                             NOT NULL VARCHAR2(15)
+ LNAME                                                                                                             NOT NULL VARCHAR2(15)
+ GENDER                                                                                                            NOT NULL CHAR(1)
+ BIRTHDATE                                                                                                         NOT NULL DATE
+ PINCODE                                                                                                                    NUMBER(6)
+ EMAIL                                                                                                                      VARCHAR2(35)
+
+SQL> SET PAGESIZE 50;
+SQL> DESC PERSON;
+ Name                                                                                                              Null?    Type
+ ----------------------------------------------------------------------------------------------------------------- -------- ----------------------------------------------------------------------------
+ AADHARNO                                                                                                          NOT NULL NUMBER(12)
+ FNAME                                                                                                             NOT NULL VARCHAR2(15)
+ LNAME                                                                                                             NOT NULL VARCHAR2(15)
+ GENDER                                                                                                            NOT NULL CHAR(1)
+ BIRTHDATE                                                                                                         NOT NULL DATE
+ PINCODE                                                                                                                    NUMBER(6)
+ EMAIL                                                                                                                      VARCHAR2(35)
+
+SQL> SET PAGESIZE 100;
+SQL> SET LINESIZE 100;
+SQL> DESC PERSON;
+ Name                                                  Null?    Type
+ ----------------------------------------------------- -------- ------------------------------------
+ AADHARNO                                              NOT NULL NUMBER(12)
+ FNAME                                                 NOT NULL VARCHAR2(15)
+ LNAME                                                 NOT NULL VARCHAR2(15)
+ GENDER                                                NOT NULL CHAR(1)
+ BIRTHDATE                                             NOT NULL DATE
+ PINCODE                                                        NUMBER(6)
+ EMAIL                                                          VARCHAR2(35)
+
+SQL> DESC CONTACT;
+ Name                                                  Null?    Type
+ ----------------------------------------------------- -------- ------------------------------------
+ AADHARNO                                              NOT NULL NUMBER(12)
+ PHONE                                                 NOT NULL NUMBER(10)
+
+SQL> DESC USER_CONSTRAINTS
+ Name                                                  Null?    Type
+ ----------------------------------------------------- -------- ------------------------------------
+ OWNER                                                          VARCHAR2(30)
+ CONSTRAINT_NAME                                       NOT NULL VARCHAR2(30)
+ CONSTRAINT_TYPE                                                VARCHAR2(1)
+ TABLE_NAME                                            NOT NULL VARCHAR2(30)
+ SEARCH_CONDITION                                               LONG
+ R_OWNER                                                        VARCHAR2(30)
+ R_CONSTRAINT_NAME                                              VARCHAR2(30)
+ DELETE_RULE                                                    VARCHAR2(9)
+ STATUS                                                         VARCHAR2(8)
+ DEFERRABLE                                                     VARCHAR2(14)
+ DEFERRED                                                       VARCHAR2(9)
+ VALIDATED                                                      VARCHAR2(13)
+ GENERATED                                                      VARCHAR2(14)
+ BAD                                                            VARCHAR2(3)
+ RELY                                                           VARCHAR2(4)
+ LAST_CHANGE                                                    DATE
+ INDEX_OWNER                                                    VARCHAR2(30)
+ INDEX_NAME                                                     VARCHAR2(30)
+ INVALID                                                        VARCHAR2(7)
+ VIEW_RELATED                                                   VARCHAR2(14)
+
+SQL> DESC PRIMARY_CONSTRAINTS
+ERROR:
+ORA-04043: object PRIMARY_CONSTRAINTS does not exist
+
+
+SQL> DESC PRIMARY_KEY_CONSTRAINTS
+ERROR:
+ORA-04043: object PRIMARY_KEY_CONSTRAINTS does not exist
+
+
+SQL> SELECT TABLE_NAME, CONSTRAINT_NAME, CONSTRAINT_TYPE, OWNER
+  2  FROM USER_CONSTRAINTS
+  3  WHERE UPPER(TABLE_NAME) = 'PERSON';
+
+TABLE_NAME                     CONSTRAINT_NAME                C OWNER
+------------------------------ ------------------------------ - ------------------------------
+PERSON                         SYS_C0011144                   C CS5A31
+PERSON                         PERSON_CK_GENDER               C CS5A31
+PERSON                         SYS_C0011148                   C CS5A31
+PERSON                         SYS_C0011147                   C CS5A31
+PERSON                         SYS_C0011146                   C CS5A31
+PERSON                         SYS_C0011145                   C CS5A31
+PERSON                         PERSON_PK_AADHARNO             P CS5A31
+
+7 rows selected.
+
+SQL> SELECT TABLE_NAME, CONSTRAINT_NAME, CONSTRAINT_TYPE, OWNER
+  2  FROM USER_CONSTRAINTS
+  3  WHERE UPPER(TABLE_NAME) = 'CONTACT';
+
+TABLE_NAME                     CONSTRAINT_NAME                C OWNER
+------------------------------ ------------------------------ - ------------------------------
+CONTACT                        SYS_C0011170                   C CS5A31
+CONTACT                        SYS_C0011171                   C CS5A31
+CONTACT                        CONTACT_FK_PERSON_AADHARNO     R CS5A31
+CONTACT                        CONTACT_PK_PHONE               P CS5A31
+
+SQL>

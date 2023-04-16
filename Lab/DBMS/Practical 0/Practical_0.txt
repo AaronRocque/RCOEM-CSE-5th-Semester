@@ -1,0 +1,394 @@
+
+SQL*Plus: Release 11.2.0.1.0 Production on Sat Aug 20 16:39:43 2022
+
+Copyright (c) 1982, 2010, Oracle.  All rights reserved.
+
+Enter user-name: scott
+Enter password:
+ERROR:
+ORA-28000: the account is locked
+
+
+Enter user-name:
+ERROR:
+ORA-01017: invalid username/password; logon denied
+
+
+Enter user-name: system
+Enter password:
+
+Connected to:
+Oracle Database 11g Enterprise Edition Release 11.2.0.1.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
+
+SQL> CONNECT system/system
+Connected.
+SQL> show user
+USER is "SYSTEM"
+SQL> ALTER USER SCOTT ACCOUNT UNLOCK
+  2  ALTER USER SCOTT ACCOUNT UNLOCK;
+ALTER USER SCOTT ACCOUNT UNLOCK
+*
+ERROR at line 2:
+ORA-00922: missing or invalid option
+
+
+SQL> ALTER USER SCOTT ACCOUNT UNLOCK;
+
+User altered.
+
+SQL> CONNECT scott/tiger
+ERROR:
+ORA-28001: the password has expired
+
+
+Changing password for scott
+New password:
+Retype new password:
+Password changed
+Connected.
+SQL> show user
+USER is "SCOTT"
+SQL> connect system
+Enter password:
+Connected.
+SQL> connect scott
+Enter password:
+Connected.
+SQL> connect system
+Enter password:
+Connected.
+SQL> CREATE CS5A31 IDENTIFIED BY cs5a31 QUOTA 100M ON USERS;
+CREATE CS5A31 IDENTIFIED BY cs5a31 QUOTA 100M ON USERS
+       *
+ERROR at line 1:
+ORA-00901: invalid CREATE command
+
+
+SQL> CREATE CS5A31 IDENTIFIED BY cs5a31 QUOATA 100M ON USERS;
+CREATE CS5A31 IDENTIFIED BY cs5a31 QUOATA 100M ON USERS
+       *
+ERROR at line 1:
+ORA-00901: invalid CREATE command
+
+
+SQL> CREATE USER CS5A31 IDENTIFIED BY cs5a31 QUOATA 100M ON USERS;
+CREATE USER CS5A31 IDENTIFIED BY cs5a31 QUOATA 100M ON USERS
+                                        *
+ERROR at line 1:
+ORA-00922: missing or invalid option
+
+
+SQL> CREATE USER CS5A31 IDENTIFIED BY cs5a31 QUOTA 100M ON USERS;
+
+User created.
+
+SQL> CONNECT CS5A31/cs5a31
+ERROR:
+ORA-01045: user CS5A31 lacks CREATE SESSION privilege; logon denied
+
+
+Warning: You are no longer connected to ORACLE.
+SQL> connect system/system
+Connected.
+SQL> GRANT CONNECT, RESOURCE TO CS5A31;
+
+Grant succeeded.
+
+SQL> CONNECT CS5A31/cs5a31
+Connected.
+SQL> DESCRIBE ALL_USERS
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ USERNAME                                  NOT NULL VARCHAR2(30)
+ USER_ID                                   NOT NULL NUMBER
+ CREATED                                   NOT NULL DATE
+
+SQL> SELECT USERNAME FROM ALL_USERS;
+
+USERNAME
+------------------------------
+CS5A31
+BI
+PM
+SH
+IX
+OE
+HR
+SCOTT
+OWBSYS_AUDIT
+OWBSYS
+APEX_030200
+
+USERNAME
+------------------------------
+APEX_PUBLIC_USER
+FLOWS_FILES
+MGMT_VIEW
+SYSMAN
+SPATIAL_CSW_ADMIN_USR
+SPATIAL_WFS_ADMIN_USR
+MDDATA
+MDSYS
+SI_INFORMTN_SCHEMA
+ORDPLUGINS
+ORDDATA
+
+USERNAME
+------------------------------
+ORDSYS
+OLAPSYS
+ANONYMOUS
+XDB
+CTXSYS
+EXFSYS
+XS$NULL
+WMSYS
+APPQOSSYS
+DBSNMP
+ORACLE_OCM
+
+USERNAME
+------------------------------
+DIP
+OUTLN
+SYSTEM
+SYS
+
+37 rows selected.
+
+SQL> DESC USER_USERS
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ USERNAME                                  NOT NULL VARCHAR2(30)
+ USER_ID                                   NOT NULL NUMBER
+ ACCOUNT_STATUS                            NOT NULL VARCHAR2(32)
+ LOCK_DATE                                          DATE
+ EXPIRY_DATE                                        DATE
+ DEFAULT_TABLESPACE                        NOT NULL VARCHAR2(30)
+ TEMPORARY_TABLESPACE                      NOT NULL VARCHAR2(30)
+ CREATED                                   NOT NULL DATE
+ INITIAL_RSRC_CONSUMER_GROUP                        VARCHAR2(30)
+ EXTERNAL_NAME                                      VARCHAR2(4000)
+
+SQL> CREATE TABLE PERSON(
+  2  PID NUMBER(3) NOT NULL,
+  3  NAME VARCHAR2(30) NOT NULL'
+  4
+SQL> CREATE TABLE PERSON(
+  2  PID NUMBER(3) NOT NULL,
+  3  NAME VARCHAR2(30) NOT NULL,
+  4  AGE NUMBER(2),
+  5  GENDER CHAR(1) NOT NULL,
+  6  CONSTRAINT PERSON_PK_PID PRIMARY KEY(PID),
+  7  CONSTRAINT PERSON_CK_GENDER CHECK(GENDER IN ('M','F')),
+  8  CONSTRAINT PERSON_CK_PID CHECK(PID>100)
+  9  );
+
+Table created.
+
+SQL> DESC PERSON
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ PID                                       NOT NULL NUMBER(3)
+ NAME                                      NOT NULL VARCHAR2(30)
+ AGE                                                NUMBER(2)
+ GENDER                                    NOT NULL CHAR(1)
+
+SQL> DESC USER_CONSTRAINTS
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ OWNER                                              VARCHAR2(30)
+ CONSTRAINT_NAME                           NOT NULL VARCHAR2(30)
+ CONSTRAINT_TYPE                                    VARCHAR2(1)
+ TABLE_NAME                                NOT NULL VARCHAR2(30)
+ SEARCH_CONDITION                                   LONG
+ R_OWNER                                            VARCHAR2(30)
+ R_CONSTRAINT_NAME                                  VARCHAR2(30)
+ DELETE_RULE                                        VARCHAR2(9)
+ STATUS                                             VARCHAR2(8)
+ DEFERRABLE                                         VARCHAR2(14)
+ DEFERRED                                           VARCHAR2(9)
+ VALIDATED                                          VARCHAR2(13)
+ GENERATED                                          VARCHAR2(14)
+ BAD                                                VARCHAR2(3)
+ RELY                                               VARCHAR2(4)
+ LAST_CHANGE                                        DATE
+ INDEX_OWNER                                        VARCHAR2(30)
+ INDEX_NAME                                         VARCHAR2(30)
+ INVALID                                            VARCHAR2(7)
+ VIEW_RELATED                                       VARCHAR2(14)
+
+SQL> select table_name, constraint_name, constraint_type, delete_rule
+  2  from user_constraints
+  3  where upper(table_name)='PERSON';
+
+TABLE_NAME                     CONSTRAINT_NAME                C DELETE_RU
+------------------------------ ------------------------------ - ---------
+PERSON                         SYS_C0011053                   C
+PERSON                         SYS_C0011054                   C
+PERSON                         SYS_C0011055                   C
+PERSON                         PERSON_CK_GENDER               C
+PERSON                         PERSON_CK_PID                  C
+PERSON                         PERSON_PK_PID                  P
+
+6 rows selected.
+
+SQL> SELECT * FROM TAB;
+
+TNAME                          TABTYPE  CLUSTERID
+------------------------------ ------- ----------
+PERSON                         TABLE
+
+SQL> SELECT * FROM CAT;
+
+TABLE_NAME                     TABLE_TYPE
+------------------------------ -----------
+PERSON                         TABLE
+
+SQL> SELECT * FROM PERSON;
+
+no rows selected
+
+SQL> insert into PERSON values(101, 'Aaron Rocque', 20, 'F');
+
+1 row created.
+
+SQL> insert into PERSON values(102, 'Shruti Jain', 20, 'F');
+
+1 row created.
+
+SQL> insert into PERSON values(103, 'Arpit Thakur', null, 'F');
+
+1 row created.
+
+SQL> SELECT * FROM PERSON;
+
+       PID NAME                                  AGE G
+---------- ------------------------------ ---------- -
+       101 Aaron Rocque                           20 F
+       102 Shruti Jain                            20 F
+       103 Arpit Thakur                              F
+
+SQL> commit
+  2
+SQL> commit;
+
+Commit complete.
+
+SQL> insert into PERSON values(15, 'Arpit Thakur', null, 'F');
+insert into PERSON values(15, 'Arpit Thakur', null, 'F')
+*
+ERROR at line 1:
+ORA-02290: check constraint (CS5A31.PERSON_CK_PID) violated
+
+
+SQL> insert into PERSON values(101, 'Arpit Thakur', null, 'F');
+insert into PERSON values(101, 'Arpit Thakur', null, 'F')
+*
+ERROR at line 1:
+ORA-00001: unique constraint (CS5A31.PERSON_PK_PID) violated
+
+
+SQL> SELECT * FROM PERSON;
+
+       PID NAME                                  AGE G
+---------- ------------------------------ ---------- -
+       101 Aaron Rocque                           20 F
+       102 Shruti Jain                            20 F
+       103 Arpit Thakur                              F
+
+SQL> delete from PERSON
+  2  where pid = 101;
+
+1 row deleted.
+
+SQL> SELECT * FROM PERSON;
+
+       PID NAME                                  AGE G
+---------- ------------------------------ ---------- -
+       102 Shruti Jain                            20 F
+       103 Arpit Thakur                              F
+
+SQL> rollback
+  2
+SQL> rollback;
+
+Rollback complete.
+
+SQL> SELECT * FROM PERSON;
+
+       PID NAME                                  AGE G
+---------- ------------------------------ ---------- -
+       101 Aaron Rocque                           20 F
+       102 Shruti Jain                            20 F
+       103 Arpit Thakur                              F
+
+SQL> delete from PERSON
+  2  where pid = 101;
+
+1 row deleted.
+
+SQL> commit;
+
+Commit complete.
+
+SQL> SELECT * FROM PERSON;
+
+       PID NAME                                  AGE G
+---------- ------------------------------ ---------- -
+       102 Shruti Jain                            20 F
+       103 Arpit Thakur                              F
+
+SQL> rollback;
+
+Rollback complete.
+
+SQL> SELECT * FROM PERSON;
+
+       PID NAME                                  AGE G
+---------- ------------------------------ ---------- -
+       102 Shruti Jain                            20 F
+       103 Arpit Thakur                              F
+
+SQL> delte from PERSON where lower(name) like 'arp%';
+SP2-0734: unknown command beginning "delte from..." - rest of line ignored.
+SQL> delete from PERSON where lower(name) like 'arp%';
+
+1 row deleted.
+
+SQL> SELECT * FROM PERSON;
+
+       PID NAME                                  AGE G
+---------- ------------------------------ ---------- -
+       102 Shruti Jain                            20 F
+
+SQL> rollback;
+
+Rollback complete.
+
+SQL> SELECT * FROM PERSON;
+
+       PID NAME                                  AGE G
+---------- ------------------------------ ---------- -
+       102 Shruti Jain                            20 F
+       103 Arpit Thakur                              F
+
+SQL> update PERSON set age = 30 where pid = 103;
+
+1 row updated.
+
+SQL> SELECT * FROM PERSON;
+
+       PID NAME                                  AGE G
+---------- ------------------------------ ---------- -
+       102 Shruti Jain                            20 F
+       103 Arpit Thakur                           30 F
+
+SQL> commit
+  2
+SQL> commit;
+
+Commit complete.
+
+SQL>

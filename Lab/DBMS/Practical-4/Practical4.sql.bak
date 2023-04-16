@@ -1,0 +1,325 @@
+------------------------------------------------------------------------------
+
+--Q1
+
+--Create table PART
+CREATE TABLE PART AS
+SELECT P_CODE AS PT_CODE, DESCRIPT AS PT_DESC, P_PRICE AS PR_PRICE, V_CODE
+FROM PRODUCT
+WHERE 1=2;
+
+--Populate PART
+INSERT INTO PART
+SELECT P_CODE, DESCRIPT, P_PRICE, V_CODE
+FROM PRODUCT;
+
+--Compare PART and PRODUCT
+DESC PRODUCT;
+
+DESC PART;
+
+--Obsereve Constraints 
+SELECT TABLE_NAME, CONSTRAINT_NAME, CONSTRAINT_TYPE, DELETE_RULE
+FROM USER_CONSTRAINTS 
+WHERE TABLE_NAME IN ('PART');
+----------------------------------------------------------------------------
+
+--Q2
+
+--All vendors (unique) that have supplied a part
+SELECT DISTINCT V_CODE FROM PART 
+WHERE V_CODE IS NOT NULL;
+
+--Where prices > 10
+SELECT V_CODE, V_NAME, P_CODE, P_PRICE, QTY
+FROM VENDOR
+JOIN PRODUCT USING (V_CODE)
+WHERE QTY > 10;
+
+----------------------------------------------------------------------------
+
+--Q3
+
+SELECT DISTINCT P_CODE, DESCRIPT, P_PRICE AS PRICE
+FROM PRODUCT
+WHERE P_PRICE = (SELECT MAX(P_PRICE) FROM PRODUCT)
+UNION 
+SELECT DISTINCT P_CODE, DESCRIPT, P_PRICE AS PRICE
+FROM PRODUCT 
+WHERE P_PRICE = (SELECT MIN(P_PRICE) FROM PRODUCT);
+
+----------------------------------------------------------------------------
+
+--Q4
+
+SELECT * FROM PRODUCT 
+WHERE P_PRICE > (SELECT AVG(P_PRICE) FROM PRODUCT);
+
+--Number of producs supplied by each vendor
+SELECT V_CODE, COUNT(*) 
+FROM PRODUCT 
+GROUP BY (V_CODE)
+HAVING V_CODE IS NOT NULL;
+----------------------------------------------------------------------------
+
+--Q5
+
+----------------------------------------------------------------------------
+
+--Q6
+
+CREATE OR REPLACE VIEW PRODUCT_STATS AS 
+SELECT V_CODE, SUM(P_PRICE) AS TOT_COST, MAX(QTY) AS MX_QTY, 
+MIN(QTY) AS MN_QTY, AVG(QTY) AS AV_QTY
+FROM PRODUCT 
+GROUP BY (V_CODE)
+HAVING V_CODE IS NOT NULL;
+
+SELECT * FROM PRODUCT_STATS;
+
+----------------------------------------------------------------------------
+
+--Q7
+
+SELECT C_CODE, LNAME, FNAME, TOT_INV, BALANCE
+FROM CUSTOMER NATURAL JOIN (
+SELECT C_CODE, SUM (TOT_LINE) TOT_INV
+FROM INVOICE NATURAL JOIN (
+SELECT INV_NUM, SUM(L_UNITS * L_PRICE) TOT_LINE
+FROM LINE
+GROUP BY INV_NUM) TT
+GROUP BY C_CODE )
+ORDER BY C_CODE;
+----------------------------------------------------------------------------
+
+--Q8
+
+SELECT DISTINCT C_CODE, SUM(TOT_PUR) AS AGG_PUR, COUNT(L_NUM) AS NUM_PUR 
+FROM (SELECT C_CODE, INV_NUM, (L_UNITS * L_PRICE) AS TOT_PUR , L_NUM
+FROM LINE NATURAL JOIN INVOICE) NATURAL JOIN CUSTOMER
+GROUP BY(C_CODE);
+----------------------------------------------------------------------------
+
+--Q9
+
+SELECT INV_NUM , SUM(L_UNITS*L_PRICE) AS INV_TOTAL
+FROM LINE 
+GROUP BY(INV_NUM);
+
+SELECT C_CODE, SUM(L_UNITS*L_PRICE) AS INV_TOTAL
+FROM INVOICE NATURAL JOIN LINE
+GROUP BY(C_CODE);
+
+SELECT C_CODE,COUNT(INV_NUM) ,SUM(L_UNITS*L_PRICE) AS INV_TOTAL FROM
+LINE NATURAL JOIN INVOICE 
+ GROUP BY(C_CODE);
+
+----------------------------------------------------------------------------
+
+--Q10
+
+SELECT C_CODE,BALANCE FROM CUSTOMER  
+WHERE C_CODE  NOT IN
+(SELECT DISTINCT C_CODE FROM INVOICE);
+
+SELECT MAX(BALANCE) AS MAX_BAL,MIN(BALANCE) AS MIN_BAL,
+AVG(BALANCE) AS AVG_BAL
+FROM CUSTOMER  
+WHERE C_CODE IN
+(SELECT DISTINCT C_CODE FROM INVOICE);
+----------------------------------------------------------------------------
+
+--Q11
+
+CREATE TABLE INV_CUSTOMER AS
+(SELECT INV_NUM AS QUOTE_ID,INV_DATE AS QUOTE_DT, FNAME|| ' '||LNAME AS C_NAME
+FROM CUSTOMER NATURAL JOIN INVOICE
+WHERE 1=2);
+
+--Checking if table is empty
+SELECT * FROM INV_CUSTOMER;
+
+ALTER TABLE INV_CUSTOMER
+ADD CONSTRAINT INV_CUS_PK PRIMARY KEY(QUOTE_ID);
+
+--Checking if constraint is enforced 
+SELECT TABLE_NAME,CONSTRAINT_NAME,CONSTRAINT_TYPE,DELETE_RULE
+FROM USER_CONSTRAINTS
+WHERE TABLE_NAME='INV_CUSTOMER'
+AND CONSTRAINT_TYPE='P';
+
+INSERT INTO INV_CUSTOMER
+SELECT INV_NUM AS QUOTE_ID,INV_DATE AS QUOTE_DT,FNAME|| ' '||LNAME AS C_NAME
+FROM CUSTOMER NATURAL JOIN INVOICE;
+----------------------------------------------------------------------------
+
+--Q12
+
+CREATE OR REPLACE VIEW INV_CUSTOMER_VW AS
+SELECT  QUOTE_ID, QUOTE_DT, C_NAME
+FROM INV_CUSTOMER
+WHERE 1=2;
+
+--Checking if the table is empty
+SELECT * FROM INV_CUSTOMER_VW;
+
+--Trying to populate the table
+INSERT INTO INV_CUSTOMER_VW
+SELECT QUOTE_ID,QUOTE_DT,C_NAME
+FROM INV_CUSTOMER;
+
+INSERT INTO INV_CUSTOMER_VW
+(SELECT INV_NUM, INV_DATE,I.C_CODE           
+FROM INVOICE I INNER JOIN CUSTOMER C ON C.C_CODE=I.C_CODE );
+
+--Dropping the view
+DROP VIEW INV_CUSTOMER_VW;
+
+--Creating and populating the view at the same time
+CREATE OR REPLACE VIEW INV_CUSTOMER_VW AS
+SELECT  QUOTE_ID, QUOTE_DT, C_NAME
+FROM INV_CUSTOMER;
+
+DESC INV_CUSTOMER_VW;
+
+SELECT * FROM INV_CUSTOMER_VW;
+ 
+--Inserting row
+INSERT INTO INV_CUSTOMER_VW VALUES(1011,'12-Mar-2020','Jagat Narayan');
+
+--p_code, desc, p_date, qty, p_min, p_price, p_disc, v_code
+INSERT INTO PRODUCT
+VALUES('SH200','Sledge Hammer','05-Jul-2020',10,3,25.8,0,NULL);
+
+INSERT INTO PRODUCT
+VALUES('ZZ999','Cordless Drill','10-Jul-2020',200,40,25.5,0,24992);
+
+
+INSERT INTO PRODUCT
+VALUES('AB212','Power Drill','03-Aug-2020',15,3,275.0,0,24992);
+
+----------------------------------------------------------------------------
+
+--Q13
+
+SELECT V_CODE,V_NAME FROM VENDOR 
+WHERE V_CODE IN ( 
+SELECT DISTINCT V_CODE FROM PRODUCT WHERE V_CODE IS NOT NULL );
+----------------------------------------------------------------------------
+
+--Q14
+
+--Checking average
+SELECT AVG(P_PRICE) FROM PRODUCT;
+
+SELECT COUNT(P_CODE) FROM PRODUCT;
+
+--Based on Product Description
+SELECT DESCRIPT,COUNT(*) FROM PRODUCT GROUP BY (DESCRIPT);
+----------------------------------------------------------------------------
+
+--Q15
+
+SELECT P_CODE,DESCRIPT,P_PRICE FROM PRODUCT
+WHERE P_PRICE >= (SELECT AVG(P_PRICE) FROM PRODUCT);
+
+----------------------------------------------------------------------------
+
+--Q16
+
+SELECT V_CODE,V_NAME,V_CONTACT FROM VENDOR 
+WHERE V_CODE NOT IN ( SELECT DISTINCT V_CODE FROM PRODUCT 
+WHERE V_CODE IS NOT NULL);
+
+----------------------------------------------------------------------------
+
+--Q17
+
+UPDATE PRODUCT
+SET P_PRICE =(SELECT AVG(P_PRICE) FROM PRODUCT)
+WHERE V_CODE IN
+(SELECT V_CODE FROM VENDOR WHERE V_STATE NOT IN ('TN','KY'));
+
+INSERT INTO LINE VALUES(1003,4,'ZZ999',10,25.5);
+
+SELECT * FROM LINE;
+----------------------------------------------------------------------------
+
+--Q18
+
+--Ordered some kind of blade
+SELECT DISTINCT C_CODE,FNAME,LNAME FROM CUSTOMER 
+WHERE C_CODE IN
+(SELECT C_CODE FROM INVOICE
+WHERE INV_NUM IN 
+(SELECT INV_NUM FROM LINE 
+WHERE P_CODE IN
+(SELECT P_CODE FROM PRODUCT WHERE 
+UPPER(DESCRIPT) LIKE '%BLADE%')
+)
+);
+
+--Ordered power drill
+SELECT C_CODE ,FNAME,LNAME FROM CUSTOMER WHERE
+C_CODE IN 
+(SELECT C_CODE FROM INVOICE WHERE INV_NUM IN 
+(SELECT INV_NUM FROM LINE 
+WHERE P_CODE IN
+(SELECT P_CODE FROM PRODUCT WHERE DESCRIPT='Power Drill')
+)
+);
+----------------------------------------------------------------------------
+
+--Q19
+
+SELECT C_CODE,FNAME,LNAME FROM CUSTOMER WHERE C_CODE IN 
+(SELECT C_CODE FROM INVOICE 
+WHERE INV_NUM IN
+(SELECT INV_NUM FROM LINE 
+WHERE P_CODE IN
+(SELECT P_CODE FROM PRODUCT WHERE 
+UPPER(DESCRIPT) LIKE '%DRILL%' OR
+UPPER(DESCRIPT) LIKE'%HAMMER%' OR
+UPPER(DESCRIPT) LIKE'%SAW%'
+)
+)
+);
+----------------------------------------------------------------------------
+
+--Q20
+
+SELECT SUM(L_UNITS) AS TOTAL_SUM,P_CODE FROM LINE WHERE 
+L_UNITS >(SELECT AVG(L_UNITS) FROM LINE)
+GROUP BY P_CODE;
+
+
+----------------------------------------------------------------------------
+
+--Q21
+
+SELECT C_CODE,FNAME,LNAME FROM CUSTOMER 
+WHERE C_CODE IN 
+(SELECT C_CODE FROM INVOICE 
+WHERE INV_NUM IN
+((SELECT INV_NUM FROM LINE 
+WHERE P_CODE IN
+(SELECT P_CODE FROM PRODUCT WHERE P_CODE IN('HC100' , 'JB012'))
+))
+);
+
+----------------------------------------------------------------------------
+
+--Q22
+
+SELECT P_PRICE, AVG(P_PRICE),P_PRICE-AVG(P_PRICE) AS DIFF 
+FROM PRODUCT GROUP BY(P_PRICE);
+
+----------------------------------------------------------------------------
+
+--Q23
+
+----------------------------------------------------------------------------
+
+--Q24
+
+----------------------------------------------------------------------------

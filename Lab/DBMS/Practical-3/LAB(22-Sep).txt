@@ -1,0 +1,664 @@
+
+DATABASE CONTAINS..
+
+
+     DEPT#
+----------
+         4
+
+    STAFF#
+----------
+         5
+
+  STUDENT#
+----------
+        75
+
+CSE STUDENT#
+------------
+          32
+
+AIML STUDENT#
+-------------
+           15
+
+CYBER STUDENT#
+--------------
+            14
+
+DATA STUDENT#
+-------------
+           14
+SQL> COLUMN OBJECT_NAME FORMAT A20
+SQL> COLUMN MIN_VALUE HEADING MNV FORMAT 999
+SQL> COLUMN MAX_VALUE HEADING MXV FORMAT 999
+SQL> COLUMN SEQUENCE_NAME HEADING SEQ_NAME FORMAT A12
+SQL> COLUMN INCREMENT_BY HEADING INR FORMAT 999
+SQL> COLUMN CACHE_SIZE HEADING CACHE FORMAT 99999
+SQL> COLUMN LAST_NUMBER HEADING LAST FORMAT 999
+SQL> SELECT * FROM USER_SEQUENCE
+  2  WHERE SEQUENCE_NAME = 'TEST_SQ';
+SELECT * FROM USER_SEQUENCE
+              *
+ERROR at line 1:
+ORA-00942: table or view does not exist
+
+
+SQL> SELECT * FROM USER_SEQUENCES
+  2  WHERE SEQUENCE_NAME = 'TEST_SQ';
+
+SEQ_NAME      MNV  MXV  INR C O  CACHE LAST
+------------ ---- ---- ---- - - ------ ----
+TEST_SQ         1  100    1 N Y      0   11
+
+1 row selected.
+
+SQL> SELECT TEST_SQ.CURRVAL FROM DUAL;
+SELECT TEST_SQ.CURRVAL FROM DUAL
+       *
+ERROR at line 1:
+ORA-08002: sequence TEST_SQ.CURRVAL is not yet defined in this session
+
+
+SQL> SELECT TEST_SQ.NEXTVAL FROM DUAL;
+
+   NEXTVAL
+----------
+        11
+
+1 row selected.
+
+SQL> SELECT * FROM USER_SEQUENCES
+  2  WHERE SEQUENCE_NAME = 'TEST_SQ';
+
+SEQ_NAME      MNV  MXV  INR C O  CACHE LAST
+------------ ---- ---- ---- - - ------ ----
+TEST_SQ         1  100    1 N Y      0   12
+
+1 row selected.
+
+SQL> SELECT TEST_SQ.CURRVAL FROM DUAL;
+
+   CURRVAL
+----------
+        11
+
+1 row selected.
+
+SQL> CREATE TABLE
+  2  TT (ID NUMBER(3) NOT NULL PRIMARY KEY, AGE NUMBER(2)
+  3  NOT NULL);
+
+Table created.
+
+SQL> INSERT INTO TT VALUES (TEST_SQ.CURRVAL+90, 18);
+
+1 row created.
+
+SQL> INSERT INTO TT VALUES (TEST_SQ.CURRVAL+90, 18);
+INSERT INTO TT VALUES (TEST_SQ.CURRVAL+90, 18)
+*
+ERROR at line 1:
+ORA-00001: unique constraint (CS5A31.SYS_C0012134) violated
+
+
+SQL> INSERT INTO TT VALUES (TEST_SQ.NEXTVAL+90, 18);
+
+1 row created.
+
+SQL> INSERT INTO TT VALUES (TEST_SQ.NEXTVAL+90, 19);
+
+1 row created.
+
+SQL> INSERT INTO TT VALUES (TEST_SQ.NEXTVAL+90, 21);
+
+1 row created.
+
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> SELECT * FROM USER_SEQUENCES
+  2  WHERE SEQUENCE_NAME = 'TEST_SQ';
+
+SEQ_NAME      MNV  MXV  INR C O  CACHE LAST
+------------ ---- ---- ---- - - ------ ----
+TEST_SQ         1  100    1 N Y      0   15
+
+1 row selected.
+
+SQL> SELECT * FROM TT;
+
+        ID        AGE
+---------- ----------
+       101         18
+       102         18
+       103         19
+       104         21
+
+4 rows selected.
+
+SQL> DROP SEQUENCE TEST_SQ;
+
+Sequence dropped.
+
+SQL> SELECT * FROM CAT;
+
+TABLE_NAME                     TABLE_TYPE
+------------------------------ -----------
+CONTACT                        TABLE
+CUSTOMER                       TABLE
+DEPARTMENT                     TABLE
+DEPT                           TABLE
+EMP                            TABLE
+INVOICE                        TABLE
+LINE                           TABLE
+PERSON                         TABLE
+PRODUCT                        TABLE
+REGION                         TABLE
+STAFF                          TABLE
+STORE                          TABLE
+STUDENT                        TABLE
+TEACHER                        TABLE
+TT                             TABLE
+VENDOR                         TABLE
+
+16 rows selected.
+
+SQL> CREATE SEQUENCE STAFF_SQ
+  2  START WITH 106
+  3  MAXVALUE 200
+  4  MINVALUE 100
+  5  NOCYCLE
+  6  ORDER
+  7  NOCACHE;
+
+Sequence created.
+
+SQL> SELECT * FROM USER_SEQUENCES
+  2  WHERE SEQUENCE_NAME = 'STAFF_SQ'
+  3  ;
+
+SEQ_NAME      MNV  MXV  INR C O  CACHE LAST
+------------ ---- ---- ---- - - ------ ----
+STAFF_SQ      100  200    1 N Y      0  106
+
+1 row selected.
+
+SQL> SELECT * FORM STAFF;
+SELECT * FORM STAFF
+         *
+ERROR at line 1:
+ORA-00923: FROM keyword not found where expected
+
+
+SQL> SELECT * FROM STAFF;
+
+       SID NAME                      BRAN DESG      JOIN_DT
+---------- ------------------------- ---- --------- ---------
+       101 Kamalkant Marathe         CSE  Professor 12-JUN-05
+       102 Adishesh Vidyarthi        AIML Associate 22-JUL-06
+       103 Manishi Singh             DAT  Professor 10-NOV-07
+       104 Aasawari Deodhar          CSE  Associate 13-OCT-08
+       105 Geetika Goenka            CSEC Professor 15-NOV-09
+
+5 rows selected.
+
+SQL> INSERT INTO STAFF
+  2  VALUES (TEST_SQ.CURRVAL, 'DAT', 'Deo Narayan Mishra', 'Assistant', 13-Oct-2013);
+VALUES (TEST_SQ.CURRVAL, 'DAT', 'Deo Narayan Mishra', 'Assistant', 13-Oct-2013)
+                                                                      *
+ERROR at line 2:
+ORA-00984: column not allowed here
+
+
+SQL> INSERT INTO STAFF
+  2  VALUES (TEST_SQ.CURRVAL, 'DAT', 'Deo Narayan Mishra', 'Assistant', '13-Oct-2013');
+VALUES (TEST_SQ.CURRVAL, 'DAT', 'Deo Narayan Mishra', 'Assistant', '13-Oct-2013')
+        *
+ERROR at line 2:
+ORA-02289: sequence does not exist
+
+
+SQL> INSERT INTO STAFF
+  2  VALUES (STAFF_SQ.CURRVAL, 'DAT', 'Deo Narayan Mishra', 'Assistant', '13-Oct-2013');
+VALUES (STAFF_SQ.CURRVAL, 'DAT', 'Deo Narayan Mishra', 'Assistant', '13-Oct-2013')
+        *
+ERROR at line 2:
+ORA-08002: sequence STAFF_SQ.CURRVAL is not yet defined in this session
+
+
+SQL> SELECT START_SQ.NEXTVAL FROM DUAL;
+SELECT START_SQ.NEXTVAL FROM DUAL
+       *
+ERROR at line 1:
+ORA-02289: sequence does not exist
+
+
+SQL> SELECT STAFF_SQ.NEXTVAL FROM DUAL;
+
+   NEXTVAL
+----------
+       106
+
+1 row selected.
+
+SQL> INSERT INTO STAFF
+  2  VALUES (STAFF_SQ.CURRVAL, 'DAT', 'Deo Narayan Mishra', 'Assistant', '13-Oct-2013');
+VALUES (STAFF_SQ.CURRVAL, 'DAT', 'Deo Narayan Mishra', 'Assistant', '13-Oct-2013')
+                                 *
+ERROR at line 2:
+ORA-12899: value too large for column "CS5A31"."STAFF"."BRANCH" (actual: 18,
+maximum: 4)
+
+
+SQL> INSERT INTO STAFF
+  2  VALUES (STAFF_SQ.CURRVAL, 'Deo Narayan Mishra','DAT', 'Assistant', '13-Oct-2013');
+
+1 row created.
+
+SQL> INSERT INTO STAFF
+  2  VALUES (STAFF_SQ.CURRVAL+1, 'Sanjeev Bamireddy','CSEC', 'Associate', '12-May-2018');
+
+1 row created.
+
+SQL> select * from staff;
+
+       SID NAME                      BRAN DESG      JOIN_DT
+---------- ------------------------- ---- --------- ---------
+       101 Kamalkant Marathe         CSE  Professor 12-JUN-05
+       102 Adishesh Vidyarthi        AIML Associate 22-JUL-06
+       103 Manishi Singh             DAT  Professor 10-NOV-07
+       104 Aasawari Deodhar          CSE  Associate 13-OCT-08
+       105 Geetika Goenka            CSEC Professor 15-NOV-09
+       106 Deo Narayan Mishra        DAT  Assistant 13-OCT-13
+       107 Sanjeev Bamireddy         CSEC Associate 12-MAY-18
+
+7 rows selected.
+
+SQL> SELECT STAFF_SQ.NEXTVAL FROM DUAL;
+
+   NEXTVAL
+----------
+       107
+
+1 row selected.
+
+SQL> SELECT STAFF_SQ.CURVAL FROM DUAL;
+SELECT STAFF_SQ.CURVAL FROM DUAL
+       *
+ERROR at line 1:
+ORA-00904: "STAFF_SQ"."CURVAL": invalid identifier
+
+
+SQL> SELECT STAFF_SQ.CURRVAL FROM DUAL;
+
+   CURRVAL
+----------
+       107
+
+1 row selected.
+
+SQL> INSERT INTO STAFF
+  2  VALUES (STAFF_SQ.NEXTVAL, 'Jasmine Arora','CSE', 'Assistant', '11-Aug-2017');
+
+1 row created.
+
+SQL> SELECT * FROM STAFF;
+
+       SID NAME                      BRAN DESG      JOIN_DT
+---------- ------------------------- ---- --------- ---------
+       101 Kamalkant Marathe         CSE  Professor 12-JUN-05
+       102 Adishesh Vidyarthi        AIML Associate 22-JUL-06
+       103 Manishi Singh             DAT  Professor 10-NOV-07
+       104 Aasawari Deodhar          CSE  Associate 13-OCT-08
+       105 Geetika Goenka            CSEC Professor 15-NOV-09
+       106 Deo Narayan Mishra        DAT  Assistant 13-OCT-13
+       107 Sanjeev Bamireddy         CSEC Associate 12-MAY-18
+       108 Jasmine Arora             CSE  Assistant 11-AUG-17
+
+8 rows selected.
+
+SQL> INSERT INTO STAFF
+  2  VALUES (STAFF_SQ.NEXTVAL, 'Vallabh Pai','CSE', 'Assistant', '17-Sep-2018');
+
+1 row created.
+
+SQL> INSERT INTO STAFF
+  2  VALUES (STAFF_SQ.NEXTVAL, 'Harmeet Khullar','CSE', 'Assistant', '17-Mar-2019');
+
+1 row created.
+
+SQL> SELECT * FROM STAFF;
+
+       SID NAME                      BRAN DESG      JOIN_DT
+---------- ------------------------- ---- --------- ---------
+       101 Kamalkant Marathe         CSE  Professor 12-JUN-05
+       102 Adishesh Vidyarthi        AIML Associate 22-JUL-06
+       103 Manishi Singh             DAT  Professor 10-NOV-07
+       104 Aasawari Deodhar          CSE  Associate 13-OCT-08
+       105 Geetika Goenka            CSEC Professor 15-NOV-09
+       106 Deo Narayan Mishra        DAT  Assistant 13-OCT-13
+       107 Sanjeev Bamireddy         CSEC Associate 12-MAY-18
+       108 Jasmine Arora             CSE  Assistant 11-AUG-17
+       109 Vallabh Pai               CSE  Assistant 17-SEP-18
+       110 Harmeet Khullar           CSE  Assistant 17-MAR-19
+
+10 rows selected.
+
+SQL> commit;
+
+Commit complete.
+
+SQL> UPDATE STAFF
+  2  SET BRAN = 'AIML'
+  3  WHERE SID = 110;
+SET BRAN = 'AIML'
+    *
+ERROR at line 2:
+ORA-00904: "BRAN": invalid identifier
+
+
+SQL> UPDATE STAFF
+  2  SET BRANCH = 'AIML'
+  3  WHERE SID = 110;
+
+1 row updated.
+
+SQL> SELECT * FROM STAFF;
+
+       SID NAME                      BRAN DESG      JOIN_DT
+---------- ------------------------- ---- --------- ---------
+       101 Kamalkant Marathe         CSE  Professor 12-JUN-05
+       102 Adishesh Vidyarthi        AIML Associate 22-JUL-06
+       103 Manishi Singh             DAT  Professor 10-NOV-07
+       104 Aasawari Deodhar          CSE  Associate 13-OCT-08
+       105 Geetika Goenka            CSEC Professor 15-NOV-09
+       106 Deo Narayan Mishra        DAT  Assistant 13-OCT-13
+       107 Sanjeev Bamireddy         CSEC Associate 12-MAY-18
+       108 Jasmine Arora             CSE  Assistant 11-AUG-17
+       109 Vallabh Pai               CSE  Assistant 17-SEP-18
+       110 Harmeet Khullar           AIML Assistant 17-MAR-19
+
+10 rows selected.
+
+SQL> DESC CUSTOMER
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ C_CODE                                    NOT NULL NUMBER(5)
+ LNAME                                     NOT NULL VARCHAR2(10)
+ FNAME                                     NOT NULL VARCHAR2(10)
+ C_AREA                                    NOT NULL NUMBER(3)
+ C_PHONE                                   NOT NULL NUMBER(7)
+ BALANCE                                   NOT NULL NUMBER(7,2)
+
+SQL> CREATE TABLE CUST AS SELECT * FROM CUSTOMER;
+
+Table created.
+
+SQL> SELECT COUNT(*) FROM CUST;
+
+  COUNT(*)
+----------
+        11
+
+1 row selected.
+
+SQL> ALTER TABLE CUST
+  2  ADD CONSTRAINT
+  3  CUST_PK_C_CODE PRIMARY KEY (C_CODE);
+
+Table altered.
+
+SQL> SELECT * FROM CUST;
+
+    C_CODE LNAME      FNAME          C_AREA    C_PHONE    BALANCE
+---------- ---------- ---------- ---------- ---------- ----------
+     10010 Anderson   James             615    2933893          0
+     10011 Johnson    Elena             713    2753455          0
+     10012 Smith      Kathy             615    2873453     345.86
+     10013 Paul       Chris             615    2879998     536.75
+     10014 Johnson    Bill              615    2455533          0
+     10015 Samuels    Julia             713    2345432          0
+     10016 Harris     Anne              615    2233445     221.19
+     10017 Ford       Gustav            615    2223444     768.93
+     10018 Lee        Ming              713    2323234     216.55
+     10019 Green      Walter            615    2786403          0
+     10020 ROCQUE     AARON             904    3562098        500
+
+11 rows selected.
+
+SQL> DESC CUST
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ C_CODE                                    NOT NULL NUMBER(5)
+ LNAME                                     NOT NULL VARCHAR2(10)
+ FNAME                                     NOT NULL VARCHAR2(10)
+ C_AREA                                    NOT NULL NUMBER(3)
+ C_PHONE                                   NOT NULL NUMBER(7)
+ BALANCE                                   NOT NULL NUMBER(7,2)
+
+SQL> ALTER TABLE CUST
+  2  MODIFY (C_PHONE NUMBER(7), BALANCE NUMBER(9,2));
+
+Table altered.
+
+SQL> DESC CUST
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ C_CODE                                    NOT NULL NUMBER(5)
+ LNAME                                     NOT NULL VARCHAR2(10)
+ FNAME                                     NOT NULL VARCHAR2(10)
+ C_AREA                                    NOT NULL NUMBER(3)
+ C_PHONE                                   NOT NULL NUMBER(7)
+ BALANCE                                   NOT NULL NUMBER(9,2)
+
+SQL> ALTER TABLE CUST
+  2  MODIFY C_PHONE NUMBER(7) NULL;
+
+Table altered.
+
+SQL> DESC CUST
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ C_CODE                                    NOT NULL NUMBER(5)
+ LNAME                                     NOT NULL VARCHAR2(10)
+ FNAME                                     NOT NULL VARCHAR2(10)
+ C_AREA                                    NOT NULL NUMBER(3)
+ C_PHONE                                            NUMBER(7)
+ BALANCE                                   NOT NULL NUMBER(9,2)
+
+SQL> ALTER TABLE CUST
+  2  MODIFY BALANCE NUMBER(9,2) NULL;
+
+Table altered.
+
+SQL> DESC CUST
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ C_CODE                                    NOT NULL NUMBER(5)
+ LNAME                                     NOT NULL VARCHAR2(10)
+ FNAME                                     NOT NULL VARCHAR2(10)
+ C_AREA                                    NOT NULL NUMBER(3)
+ C_PHONE                                            NUMBER(7)
+ BALANCE                                            NUMBER(9,2)
+
+SQL> CREATE OR REPLACE VIEW CUS_VW
+  2  AS SELECT C_CODE, FNAME, LNAME, BALANCE
+  3  FROM CUST;
+CREATE OR REPLACE VIEW CUS_VW
+                       *
+ERROR at line 1:
+ORA-01031: insufficient privileges
+
+
+SQL> CONNECT SYSTEM/system
+Connected.
+SQL>
+SQL> GRANT CREATE VIEW TO CS5A31;
+
+Grant succeeded.
+
+SQL> CONNECT CS5A31/cs5a31
+Connected.
+SQL> CREATE OR REPLACE VIEW CUS_VW
+  2  AS SELECT C_CODE, FNAME, LNAME, BALANCE
+  3  FROM CUST;
+
+View created.
+
+SQL> DESC TAB
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ TNAME                                     NOT NULL VARCHAR2(30)
+ TABTYPE                                            VARCHAR2(7)
+ CLUSTERID                                          NUMBER
+
+SQL> SELECT * FROM TAB
+  2  WHERE TNAME = 'CUS_VIEW';
+
+no rows selected
+
+SQL> SELECT * FROM TAB
+  2  WHERE TNAME = 'CUS_VW'
+  3  ;
+
+TNAME                          TABTYPE  CLUSTERID
+------------------------------ ------- ----------
+CUS_VW                         VIEW
+
+1 row selected.
+
+SQL> SELECT * FROM CAT
+  2  WHERE TNAME = 'CUS_VW';
+WHERE TNAME = 'CUS_VW'
+      *
+ERROR at line 2:
+ORA-00904: "TNAME": invalid identifier
+
+
+SQL> SELECT * FROM CAT
+  2  WHERE TABLE_NAME = 'CUS_VW';
+
+TABLE_NAME                     TABLE_TYPE
+------------------------------ -----------
+CUS_VW                         VIEW
+
+1 row selected.
+
+SQL> SELECT * FROM USER_OBJECTS
+  2  WHERE TABLE_NAME = 'CUS_VW';
+WHERE TABLE_NAME = 'CUS_VW'
+      *
+ERROR at line 2:
+ORA-00904: "TABLE_NAME": invalid identifier
+
+
+SQL> SELECT * FROM USER_OBJECTS
+  2  WHERE TNAME = 'CUS_VW';
+WHERE TNAME = 'CUS_VW'
+      *
+ERROR at line 2:
+ORA-00904: "TNAME": invalid identifier
+
+
+SQL> DESC USER_VIEWS
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ VIEW_NAME                                 NOT NULL VARCHAR2(30)
+ TEXT_LENGTH                                        NUMBER
+ TEXT                                               LONG
+ TYPE_TEXT_LENGTH                                   NUMBER
+ TYPE_TEXT                                          VARCHAR2(4000)
+ OID_TEXT_LENGTH                                    NUMBER
+ OID_TEXT                                           VARCHAR2(4000)
+ VIEW_TYPE_OWNER                                    VARCHAR2(30)
+ VIEW_TYPE                                          VARCHAR2(30)
+ SUPERVIEW_NAME                                     VARCHAR2(30)
+ EDITIONING_VIEW                                    VARCHAR2(1)
+ READ_ONLY                                          VARCHAR2(1)
+
+SQL> DESC USER_OBJECTS;
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ OBJECT_NAME                                        VARCHAR2(128)
+ SUBOBJECT_NAME                                     VARCHAR2(30)
+ OBJECT_ID                                          NUMBER
+ DATA_OBJECT_ID                                     NUMBER
+ OBJECT_TYPE                                        VARCHAR2(19)
+ CREATED                                            DATE
+ LAST_DDL_TIME                                      DATE
+ TIMESTAMP                                          VARCHAR2(19)
+ STATUS                                             VARCHAR2(7)
+ TEMPORARY                                          VARCHAR2(1)
+ GENERATED                                          VARCHAR2(1)
+ SECONDARY                                          VARCHAR2(1)
+ NAMESPACE                                          NUMBER
+ EDITION_NAME                                       VARCHAR2(30)
+
+SQL> SELECT * FROM USER_OBJECTS
+  2  WHERE OBJECTNAME = 'CUS_VW';
+WHERE OBJECTNAME = 'CUS_VW'
+      *
+ERROR at line 2:
+ORA-00904: "OBJECTNAME": invalid identifier
+
+
+SQL> SELECT VIEW_NAME, VIEW_TYPE, READ_ONLY
+  2  FROM USER_VIEWS
+  3  WHERE UPPER(VIEW_NAME) LIKE '%VW%'
+  4  ;
+
+VIEW_NAME                      VIEW_TYPE                      R
+------------------------------ ------------------------------ -
+CUS_VW                                                        N
+
+1 row selected.
+
+SQL> COLUMN VIEW_NAME FORMAT A15
+SQL> COLUMN VIEW_TYPE FORMAT A15
+SQL>
+SQL> SELECT VIEW_NAME, VIEW_TYPE, READ_ONLY
+  2  FROM USER_VIEWS
+  3  WHERE UPPER(VIEW_NAME) LIKE '%VW%';
+
+VIEW_NAME       VIEW_TYPE       R
+--------------- --------------- -
+CUS_VW                          N
+
+1 row selected.
+
+SQL> SELECT * FROM CUS_VW;
+
+    C_CODE FNAME      LNAME         BALANCE
+---------- ---------- ---------- ----------
+     10010 James      Anderson            0
+     10011 Elena      Johnson             0
+     10012 Kathy      Smith          345.86
+     10013 Chris      Paul           536.75
+     10014 Bill       Johnson             0
+     10015 Julia      Samuels             0
+     10016 Anne       Harris         221.19
+     10017 Gustav     Ford           768.93
+     10018 Ming       Lee            216.55
+     10019 Walter     Green               0
+     10020 AARON      ROCQUE            500
+
+11 rows selected.
+
+SQL> SHOW LONG
+long 80
+SQL> COLUMN TEXT FORMAT A50
+SQL> SELECT VIEW_NAME, TEXT
+  2  FROM USER_VIEWS
+  3  WHERE UPPER(VIEW_NAME) LIKE '%VW%';
+
+VIEW_NAME       TEXT
+--------------- --------------------------------------------------
+CUS_VW          SELECT C_CODE, FNAME, LNAME, BALANCE
+                FROM CUST
+
+
+1 row selected.
+
+SQL>

@@ -1,0 +1,24 @@
+SQL> select * from tab;
+
+TNAME                          TABTYPE  CLUSTERID                               
+------------------------------ ------- ----------                               
+CONTACT                        TABLE                                            
+DEPARTMENT                     TABLE                                            
+EMP                            TABLE                                            
+PERSON                         TABLE                                            
+REGION                         TABLE                                            
+STORE                          TABLE                                            
+TEACHER                        TABLE                                            
+
+7 rows selected.
+
+SQL> select * from teacher;
+
+TEACHER_ID FNAME           LNAME              DEPT_ID G  BASIC_SAL              
+---------- --------------- --------------- ---------- - ----------              
+       101 Lalit           Mishra                  11 M      85000              
+       102 Maneet          Shukla                  22 F      85000              
+
+2 rows selected.
+
+SQL> spool on

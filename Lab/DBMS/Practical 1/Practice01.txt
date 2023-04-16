@@ -1,0 +1,353 @@
+
+SQL*Plus: Release 11.2.0.1.0 Production on Thu Sep 1 13:11:05 2022
+
+Copyright (c) 1982, 2010, Oracle.  All rights reserved.
+
+Enter user-name: CS5A31
+Enter password:
+
+Connected to:
+Oracle Database 11g Enterprise Edition Release 11.2.0.1.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
+
+SQL> select *
+  2  from all_users
+  3  where user_id > 80;
+
+USERNAME                          USER_ID CREATED
+------------------------------ ---------- ---------
+CS5A31                                 91 20-AUG-22
+BI                                     90 20-AUG-22
+PM                                     89 20-AUG-22
+SH                                     88 20-AUG-22
+IX                                     87 20-AUG-22
+OE                                     86 20-AUG-22
+HR                                     85 20-AUG-22
+SCOTT                                  84 30-MAR-10
+OWBSYS_AUDIT                           83 30-MAR-10
+XS$NULL                        2147483638 30-MAR-10
+
+10 rows selected.
+
+SQL> -- clear scr
+SQL> select *
+  2  from all_users
+  3  where upper(username) like 'SYS%';
+
+USERNAME                          USER_ID CREATED
+------------------------------ ---------- ---------
+SYS                                     0 30-MAR-10
+SYSTEM                                  5 30-MAR-10
+SYSMAN                                 72 30-MAR-10
+
+SQL> select *
+  2  from all_users
+  3  where user_id > 80;
+
+USERNAME                          USER_ID CREATED
+------------------------------ ---------- ---------
+CS5A31                                 91 20-AUG-22
+BI                                     90 20-AUG-22
+PM                                     89 20-AUG-22
+SH                                     88 20-AUG-22
+IX                                     87 20-AUG-22
+OE                                     86 20-AUG-22
+HR                                     85 20-AUG-22
+SCOTT                                  84 30-MAR-10
+OWBSYS_AUDIT                           83 30-MAR-10
+XS$NULL                        2147483638 30-MAR-10
+
+10 rows selected.
+
+SQL> select *
+  2  from all_users
+  3  where upper(username) = 'CS5A31';
+
+USERNAME                          USER_ID CREATED
+------------------------------ ---------- ---------
+CS5A31                                 91 20-AUG-22
+
+SQL> CREATE TABLE DEPARTMENT (
+  2  DEPT_ID NUMBER(2) NOT NULL,
+  3  DEPT_NAME VARCHAR2(25) NOT NULL,
+  4  INTAKE NUMBER(3) DEFAULT 60 NOT NULL,
+  5  HEADED_BY NUMBER(3) DEFAULT 101,
+  6  CONSTRAINT DEPARTMENT_PK_DEPT_ID PRIMARY KEY (DEPT_ID),
+  7  CONSTRAINT DEPARTMENT_CK_INTAKE CHECK (INTAKE IN (30, 60, 120, 180))
+  8  );
+
+Table created.
+
+SQL> SELECT * FROM TAB;
+
+TNAME                          TABTYPE  CLUSTERID
+------------------------------ ------- ----------
+BIN$5TUNZ/7bRze9Q4yx+vhcAA==$0 TABLE
+BIN$9/8RY/gWQDuxk3qLINZIpg==$0 TABLE
+BIN$McGEPJ5OSbGIeiKcYEWcQw==$0 TABLE
+BIN$Q6ZHswCAQ7yz8HAJ8DqsPw==$0 TABLE
+BIN$TBPiA3M/SbWXnpJLqKfqtg==$0 TABLE
+BIN$hL14QGNMSluJpYTlST0Oxg==$0 TABLE
+BIN$obPBsEAgRpWJQkVV/eZbWA==$0 TABLE
+BIN$p++jOXQISf6Y4Z5dG74Iuw==$0 TABLE
+CONTACT                        TABLE
+DEPARTMENT                     TABLE
+PERSON                         TABLE
+
+11 rows selected.
+
+SQL> -- TAB is a virtual table
+SQL> DESC DEPARTMENT;
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ DEPT_ID                                   NOT NULL NUMBER(2)
+ DEPT_NAME                                 NOT NULL VARCHAR2(25)
+ INTAKE                                    NOT NULL NUMBER(3)
+ HEADED_BY                                          NUMBER(3)
+
+SQL> SELECT * FROM CAT;
+
+TABLE_NAME                     TABLE_TYPE
+------------------------------ -----------
+BIN$5TUNZ/7bRze9Q4yx+vhcAA==$0 TABLE
+BIN$9/8RY/gWQDuxk3qLINZIpg==$0 TABLE
+BIN$McGEPJ5OSbGIeiKcYEWcQw==$0 TABLE
+BIN$Q6ZHswCAQ7yz8HAJ8DqsPw==$0 TABLE
+BIN$TBPiA3M/SbWXnpJLqKfqtg==$0 TABLE
+BIN$hL14QGNMSluJpYTlST0Oxg==$0 TABLE
+BIN$obPBsEAgRpWJQkVV/eZbWA==$0 TABLE
+BIN$p++jOXQISf6Y4Z5dG74Iuw==$0 TABLE
+CONTACT                        TABLE
+DEPARTMENT                     TABLE
+PERSON                         TABLE
+
+11 rows selected.
+
+SQL> DESC user_objects
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ OBJECT_NAME                                        VARCHAR2(128)
+ SUBOBJECT_NAME                                     VARCHAR2(30)
+ OBJECT_ID                                          NUMBER
+ DATA_OBJECT_ID                                     NUMBER
+ OBJECT_TYPE                                        VARCHAR2(19)
+ CREATED                                            DATE
+ LAST_DDL_TIME                                      DATE
+ TIMESTAMP                                          VARCHAR2(19)
+ STATUS                                             VARCHAR2(7)
+ TEMPORARY                                          VARCHAR2(1)
+ GENERATED                                          VARCHAR2(1)
+ SECONDARY                                          VARCHAR2(1)
+ NAMESPACE                                          NUMBER
+ EDITION_NAME                                       VARCHAR2(30)
+
+SQL> SELECT OBJECT_NAME, OBJECT_TYPE, OBJECT_ID, STATUS
+  2     FROM USER_OBJECTS
+  3     WHERE OBJECT_NAME = 'DEPARTMENT';
+
+OBJECT_NAME
+--------------------------------------------------------------------------------
+OBJECT_TYPE          OBJECT_ID STATUS
+------------------- ---------- -------
+DEPARTMENT
+TABLE                    75014 VALID
+
+
+SQL> -- column formating: only for display
+SQL> COLUMN OBJECT_NAME FORMAT A15
+SQL> COLUMN OBJECT_TYPE FORMAT A10
+SQL> COLUMN OBJECT_ID HEADING OBJ_ID FORMAT 999999
+SQL> /
+
+OBJECT_NAME     OBJECT_TYP  OBJ_ID STATUS
+--------------- ---------- ------- -------
+DEPARTMENT      TABLE        75014 VALID
+
+SQL> -- USER_CONSTAINTS: LISTS ALL CONSTRAINTS FOR A USER SPACE
+SQL> desc user_constraints
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ OWNER                                              VARCHAR2(30)
+ CONSTRAINT_NAME                           NOT NULL VARCHAR2(30)
+ CONSTRAINT_TYPE                                    VARCHAR2(1)
+ TABLE_NAME                                NOT NULL VARCHAR2(30)
+ SEARCH_CONDITION                                   LONG
+ R_OWNER                                            VARCHAR2(30)
+ R_CONSTRAINT_NAME                                  VARCHAR2(30)
+ DELETE_RULE                                        VARCHAR2(9)
+ STATUS                                             VARCHAR2(8)
+ DEFERRABLE                                         VARCHAR2(14)
+ DEFERRED                                           VARCHAR2(9)
+ VALIDATED                                          VARCHAR2(13)
+ GENERATED                                          VARCHAR2(14)
+ BAD                                                VARCHAR2(3)
+ RELY                                               VARCHAR2(4)
+ LAST_CHANGE                                        DATE
+ INDEX_OWNER                                        VARCHAR2(30)
+ INDEX_NAME                                         VARCHAR2(30)
+ INVALID                                            VARCHAR2(7)
+ VIEW_RELATED                                       VARCHAR2(14)
+
+SQL> select table_name, constraint_name, constraint_type, delete_rule
+  2  from user_constraints
+  3  where table_name = 'DEPARTMENT';
+
+TABLE_NAME                     CONSTRAINT_NAME                C DELETE_RU
+------------------------------ ------------------------------ - ---------
+DEPARTMENT                     SYS_C0011353                   C
+DEPARTMENT                     SYS_C0011354                   C
+DEPARTMENT                     SYS_C0011355                   C
+DEPARTMENT                     DEPARTMENT_CK_INTAKE           C
+DEPARTMENT                     DEPARTMENT_PK_DEPT_ID          P
+
+SQL> DESC DEPARTMENT
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ DEPT_ID                                   NOT NULL NUMBER(2)
+ DEPT_NAME                                 NOT NULL VARCHAR2(25)
+ INTAKE                                    NOT NULL NUMBER(3)
+ HEADED_BY                                          NUMBER(3)
+
+SQL> -- POPULATE THE TABLE
+SQL> INSERT INTO DEPARTMENT VALUES
+  2     (11, 'COMPUTER SCIENCE', 180, 101);
+
+1 row created.
+
+SQL> INSERT INTO DEPARTMENT(DEPT_NAME, DEPT_ID) VALUES
+  2     ('ELECTRONICS', 22);
+
+1 row created.
+
+SQL> COMMIT
+  2
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> SELECT * FROM DEPARTMENT;
+
+   DEPT_ID DEPT_NAME                     INTAKE  HEADED_BY
+---------- ------------------------- ---------- ----------
+        11 COMPUTER SCIENCE                 180        101
+        22 ELECTRONICS                       60        101
+
+SQL> CREATE TABLE TEACHER (
+  2  TEACHER_ID NUMBER(3) NOT NULL,
+  3  FNAME VARCHAR2(15) NOT NULL,
+  4  LNAME VARCHAR2(15) NOT NULL,
+  5  DEPT_ID NUMBER(2) NOT NULL,
+  6  GENDER CHAR(1) NOT NULL,
+  7  BASIC_SAL NUMBER(8,2) DEFAULT 75000 NOT NULL,
+  8  CONSTRAINT TEACHER_PK_TEACHER_ID PRIMARY KEY (TEACHER_ID),
+  9  CONSTRAINT TEACHER_FK_DEPARTMENT_DEPT_ID FOREIGN KEY (DEPT_ID),
+ 10  REFERENCES DEPARTMENT(DEPT_ID),
+ 11  CONSTRAINT TEACHER_CK_GENDER CHECK (GENDER IN ('M', 'F', 'm', 'f'))
+ 12  );
+CONSTRAINT TEACHER_FK_DEPARTMENT_DEPT_ID FOREIGN KEY (DEPT_ID),
+                                                              *
+ERROR at line 9:
+ORA-00905: missing keyword
+
+
+SQL> CREATE TABLE TEACHER (
+  2  TEACHER_ID NUMBER(3) NOT NULL,
+  3  FNAME VARCHAR2(15) NOT NULL,
+  4  LNAME VARCHAR2(15) NOT NULL,
+  5  DEPT_ID NUMBER(2) NOT NULL,
+  6  GENDER CHAR(1) NOT NULL,
+  7  BASIC_SAL NUMBER(8,2) DEFAULT 75000 NOT NULL,
+  8  CONSTRAINT TEACHER_PK_TEACHER_ID PRIMARY KEY (TEACHER_ID),
+  9  CONSTRAINT TEACHER_FK_DEPARTMENT_DEPT_ID FOREIGN KEY (DEPT_ID)
+ 10  REFERENCES DEPARTMENT(DEPT_ID),
+ 11  CONSTRAINT TEACHER_CK_GENDER CHECK (GENDER IN ('M', 'F', 'm', 'f'))
+ 12  );
+
+Table created.
+
+SQL> INSERT INTO TEACHER (101, 'Lalit', 'Mishra', 11, 'M', 85000);
+INSERT INTO TEACHER (101, 'Lalit', 'Mishra', 11, 'M', 85000)
+                     *
+ERROR at line 1:
+ORA-00928: missing SELECT keyword
+
+
+SQL> INSERT INTO TEACHER VALUES (101, 'Lalit', 'Mishra', 11, 'M', 85000);
+
+1 row created.
+
+SQL> INSERT INTO TEACHER VALUES (102, 'Maneet', 'Shukla', 22, 'F', 85000);
+
+1 row created.
+
+SQL> SELECT * FROM TEACHER;
+
+TEACHER_ID FNAME           LNAME              DEPT_ID G  BASIC_SAL
+---------- --------------- --------------- ---------- - ----------
+       101 Lalit           Mishra                  11 M      85000
+       102 Maneet          Shukla                  22 F      85000
+
+SQL> -- ENFORCE DEFFERED CONSTRAINT FK
+SQL> ALTER TABLE DEPARTMENT
+  2     ADD CONSTRAINT DEPARTMENT_FK_TEACHER_HEADED_BY FOREIGN KEY (HEADED_BY)
+  3             REFERENCES TEACHER(TEACHER_ID);
+        ADD CONSTRAINT DEPARTMENT_FK_TEACHER_HEADED_BY FOREIGN KEY (HEADED_BY)
+                       *
+ERROR at line 2:
+ORA-00972: identifier is too long
+
+
+SQL> ALTER TABLE DEPARTMENT
+  2     ADD CONSTRAINT DEPT_FK_TEACHER_HEADED_BY FOREIGN KEY (HEADED_BY)
+  3             REFERENCES TEACHER(TEACHER_ID);
+
+Table altered.
+
+SQL> INSERT INTO TEACHER VALUES (103, 'Lalit', 'Mishra', 12, 'M', 85000);
+INSERT INTO TEACHER VALUES (103, 'Lalit', 'Mishra', 12, 'M', 85000)
+*
+ERROR at line 1:
+ORA-02291: integrity constraint (CS5A31.TEACHER_FK_DEPARTMENT_DEPT_ID) violated
+- parent key not found
+
+
+SQL> DELETE FROM TEACHER
+  2     WHERE TEACHER_ID = 101;
+DELETE FROM TEACHER
+*
+ERROR at line 1:
+ORA-02292: integrity constraint (CS5A31.DEPT_FK_TEACHER_HEADED_BY) violated -
+child record found
+
+
+SQL> DELETE FROM TEACHER
+  2     WHERE TEACHER_ID = 102;
+
+1 row deleted.
+
+SQL> SELECT * FROM TEACHER;
+
+TEACHER_ID FNAME           LNAME              DEPT_ID G  BASIC_SAL
+---------- --------------- --------------- ---------- - ----------
+       101 Lalit           Mishra                  11 M      85000
+
+SQL> ROLLBACK;
+
+Rollback complete.
+
+SQL> SELECT * FROM TEACHER;
+
+TEACHER_ID FNAME           LNAME              DEPT_ID G  BASIC_SAL
+---------- --------------- --------------- ---------- - ----------
+       101 Lalit           Mishra                  11 M      85000
+       102 Maneet          Shukla                  22 F      85000
+
+SQL> DELETE FROM DEPARTMENT WHERE DEPT_ID = 22;
+DELETE FROM DEPARTMENT WHERE DEPT_ID = 22
+*
+ERROR at line 1:
+ORA-02292: integrity constraint (CS5A31.TEACHER_FK_DEPARTMENT_DEPT_ID) violated
+- child record found
+
+
+SQL>
